@@ -1,0 +1,18 @@
+services:
+  site:
+    build: dd-client/
+    ports: 
+      - "8080:8080"
+    volumes:
+      - ./dd-client:/doodle/frontend
+      - /doodle/frontend/node_modules
+  api:
+    build: dd-server/
+    ports:
+      - "8000:5000"
+    volumes:
+      - ./dd-server:/doodle/backend
+    environment:
+      FLASK_DEBUG: "true"
+  dbase:
+    image: "redis:alpine"
