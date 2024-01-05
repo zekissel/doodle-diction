@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { API_URL, LobbyProps } from "../typedef";
+import { API_URL, ChatInfo, GameInfo, LobbyProps, UserInfo } from "../typedef";
 import Game from "./Game";
 
 function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
+
+    const [users, setUsers] = useState<UserInfo[]>([]);
+    const [chats, setChats] = useState<ChatInfo[]>([]);
 
     const [confirmExit, setExit] = useState(false);
     const exitRoom = async () => {
@@ -24,9 +27,12 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
         const interval = setInterval(() => {
             fetch(`${API_URL}/lobby/${rKey}`)
                 .then(res => res.json())
-                .then(dat => console.log(dat))
+                .then(dat => {
+                    setUsers(dat['users']);
+                    setChats(dat['chats']);
+                })
                 .catch(err => console.error(err))
-        }, 3000);
+        }, 2000);
 
         return () => clearInterval(interval);
     }, []);
@@ -48,19 +54,20 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             
             <fieldset><legend>Players</legend>
                 <ul>
-                    <li>player 1</li>
-                    <li>player 2</li>
+                    { users.map((user, i) => <li key={i}>{ user.name }</li>) }
                 </ul>
             </fieldset>
             
             <fieldset><legend>Chat</legend>
                 <ul>
-                    <li>chat 1</li>
-                    <li>chat 2</li>
+                    { chats.map((chat, i) => <li key={i}>{ chat.author }: { chat.message }</li>) }
                 </ul>
             </fieldset>
 
-            <fieldset><legend>Pregame</legend>
+            <fieldset>
+                <legend>
+                    Pregame
+                </legend>
                 <Game />
             </fieldset>
         </main>

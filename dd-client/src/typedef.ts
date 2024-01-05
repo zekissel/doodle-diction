@@ -20,7 +20,7 @@ export interface LobbyProps {
 }
 
 export interface RoomInfo {
-    id: number;
+    rID: number;
     name: string;
     pw: string;
 
@@ -33,13 +33,13 @@ export interface RoomInfo {
 }
 
 export interface UserInfo {
-    id: string;
+    uID: string;
     name: string;
     ready: boolean;
 }
 
 export interface ChatInfo {
-    id: string;
+    cID: string;
     stamp: Date;
     author: string;
     message: string;
@@ -47,6 +47,6 @@ export interface ChatInfo {
 
 
 export interface GameInfo {
-    id: string;
+    gID: string;
     data: string[];
 }

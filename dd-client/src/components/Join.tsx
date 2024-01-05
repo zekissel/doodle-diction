@@ -111,7 +111,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
             <fieldset>
                 <legend>Public Games</legend>
                     <ul>
-                        { rooms.map(r => <li key={r.id}>{ r.name }</li>) }
+                        { rooms.map(r => <li key={r.rID}>{ r.name }</li>) }
                     </ul>
             </fieldset>
             

@@ -34,14 +34,14 @@ def host():
     except ValidationError: return { 'err': 'Bad request' }, 400
     
 
-@app.route('/exit', methods=['DELETE', 'POST'])
+@app.route('/exit', methods=['POST'])
 def leave():
     try:
         room = Room.get(request.json['rKey'])
     except ValidationError: return { 'err' : 'Room not found' }, 404
 
-    if room.host == request.json['uKey']:
-        Room.delete(request.json['rKey']);
+    if room.host.pk == request.json['uKey']:
+        Room.delete(request.json['rKey'])
         return { 'msg': 'Room deleted' }, 200
     
     else:
@@ -78,8 +78,12 @@ def join():
 
 @app.route('/lobby/<r_key>', methods=['GET'])
 def lobby(r_key: str):
+    try:
+        room = Room.get(r_key)
+    except ValidationError: return { 'err': 'Room not found' }, 404
 
-    return { 'test': 'ok' }, 200
+    return { 'users': [u.dict() for u in room.users],
+             'chats': [c.dict() for c in room.chats], }, 200
 
 
 @app.route('/lobby/msg', methods=['POST'])
