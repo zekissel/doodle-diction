@@ -7,12 +7,22 @@ services:
       - ./dd-client:/doodle/frontend
       - /doodle/frontend/node_modules
   api:
+    depends_on:
+      - dbase
     build: dd-server/
     ports:
       - "8000:5000"
     volumes:
       - ./dd-server:/doodle/backend
     environment:
-      FLASK_DEBUG: "true"
+      - "FLASK_DEBUG=True"
+      - "REDIS_OM_URL=redis://dbase:6379"
   dbase:
-    image: "redis:alpine"
+    image: "redis/redis-stack:latest"
+    ports:
+      - 6379:6379
+      - 8001:8001
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
