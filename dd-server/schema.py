@@ -21,6 +21,7 @@ class Room(JsonModel):
     name: str = Field(index=True)
     pw: str
 
+    #round: int = Field(index=False, default=0)
     cap: int = Field(index=True)
     host: User = Field(index=False)
 

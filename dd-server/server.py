@@ -56,6 +56,12 @@ def join():
     if request.method == 'GET':
         rooms = Room.find(Room.cap > 0).all()
         resp = [r.dict() for r in rooms]
+        for r in resp:
+            del r['pk']
+            del r['pw']
+            del r['host']
+            for u in r['users']:
+                del u['pk']
         return { 'rooms': resp }, 200
 
     room = Room.find((Room.name == request.json['name'])).all()
@@ -83,7 +89,8 @@ def lobby(r_key: str):
     except ValidationError: return { 'err': 'Room not found' }, 404
 
     return { 'users': [u.dict() for u in room.users],
-             'chats': [c.dict() for c in room.chats], }, 200
+             'chats': [c.dict() for c in room.chats],
+             'round': 0 }, 200
 
 
 @app.route('/lobby/msg', methods=['POST'])

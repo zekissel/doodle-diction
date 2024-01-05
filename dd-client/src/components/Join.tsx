@@ -1,35 +1,46 @@
 import { useEffect, useState } from "react";
-import { API_URL, JoinProps, RoomInfo } from "../typedef";
+import { API_URL, DataState, JoinProps, RoomInfo } from "../typedef";
 
 function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
 
+    /* variables used to create/join room */
     const [roomName, setRoom] = useState(``);
     const [roomPass, setPass] = useState(``);
     const [isPrivate, setPrivate] = useState(false);
     const [capacity, setCap] = useState(6);
-
+    // prompt users for rooms with passwords != ''
+    const [verify, setVerify] = useState(false);
+    /* GUI errors for user feedback */
     const [hostError, setHError] = useState(``);
     const [joinError, setJError] = useState(``);
     const voidError = () => { setHError(``); setJError(``); }
 
-    const [verify, setVerify] = useState(false);
+    // list of rooms to be displayed to user
     const [rooms, setRooms] = useState<RoomInfo[]>([]);
+    const [progress, setProgress] = useState<DataState>(DataState.Loading);
 
+    // fetch list of rooms every 3 seconds
     useEffect(() => {
         const interval = setInterval(() => {
+            setProgress(DataState.Loading);
             fetch(`${API_URL}/join`)
                 .then(res => res.json())
-                .then(dat => setRooms(dat['rooms']))
-                .catch(err => console.error(err))
+                .then(dat => {
+                    setRooms(dat['rooms']);
+                    setProgress(DataState.Success);
+                })
+                .catch(err => {
+                    console.error(err)
+                    setProgress(DataState.Error);
+                })
         }, 3000);
-
         return () => clearInterval(interval);
     }, []);
 
     const hostGame = async () => {
         voidError();
         if (roomName === ``) return
-
+        // private rooms have negative capacity (not necessarily password enforced)
         if (isPrivate) setCap(capacity * -1);
         fetch(`${API_URL}/host`, {
             method: "POST",
@@ -111,7 +122,13 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
             <fieldset>
                 <legend>Public Games</legend>
                     <ul>
-                        { rooms.map(r => <li key={r.rID}>{ r.name }</li>) }
+                        { progress === DataState.Loading && <li>Loading public games</li> }
+                        { progress === DataState.Error && <li>Could not load public games</li> }
+
+                        { progress === DataState.Success &&
+                            (rooms.length > 0 ? rooms.map(r => <li key={r.rID}>{ r.name }</li>) 
+                            : <li>No public games yet</li>)
+                        }
                     </ul>
             </fieldset>
             
