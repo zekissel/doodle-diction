@@ -29,7 +29,7 @@ def host():
         room = Room(**request.json)
         room.users.append(host)
         room.save()
-        return { 'rKey': room.pk, 'uKey': host.pk }, 200
+        return { 'r_key': room.pk, 'u_key': host.pk }, 200
     
     except ValidationError: return { 'err': 'Bad request' }, 400
     
@@ -37,15 +37,16 @@ def host():
 @app.route('/exit', methods=['POST'])
 def leave():
     try:
-        room = Room.get(request.json['rKey'])
+        room = Room.get(request.json['r_key'])
     except ValidationError: return { 'err' : 'Room not found' }, 404
 
-    if room.host.pk == request.json['uKey']:
-        Room.delete(request.json['rKey'])
+    if room.host.pk == request.json['u_key']:
+        Room.delete(request.json['r_key'])
         return { 'msg': 'Room deleted' }, 200
     
     else:
-        room.users = [u for u in room.users if u.uID != request.json['uKey']]
+        room.users = [u for u in room.users if u.uID != request.json['u_key']]
+        User.delete(request.json['u_key'])
         room.save()
         return { 'msg': 'Exited room' }, 200
 
@@ -64,39 +65,59 @@ def join():
                 del u['pk']
         return { 'rooms': resp }, 200
 
-    room = Room.find((Room.name == request.json['name'])).all()
-    if len(room) < 1:
-        return { 'err': 'Invalid room name' }
+    try:
+        room = Room.find((Room.name == request.json['name'])).all()
+        room = room[0]
+    except ValidationError: return { 'err': 'Invalid room name' }
 
-    if room['pw'] != request.form['pw']:
+    if 'pw' in room and room['pw'] != request.form['pw']:
         if request.form['pw'] == '': return { 'auth': 'Enter room password' }, 401
         else: return { 'err': 'Incorrect password' }, 403
 
     uID = len(room.users) + 1
-    user = User({ 'uID': uID, 'name': 'Player {}'.format(uID + 1), 'ready': False })
+    user = User(**{ 'uID': uID, 'name': 'Player {}'.format(uID + 1), 'ready': False })
     user.save()
 
     room.users.append(user)
     room.save()
 
-    return { 'rKey': room.pk, 'uKey': user.pk }, 200
+    return { 'r_key': room.pk, 'u_key': user.pk }, 200
 
 
-@app.route('/lobby/<r_key>', methods=['GET'])
-def lobby(r_key: str):
+@app.route('/lobby/<r_key>/<u_key>', methods=['GET'])
+def lobby(r_key: str, u_key: str):
     try:
         room = Room.get(r_key)
     except ValidationError: return { 'err': 'Room not found' }, 404
 
-    return { 'users': [u.dict() for u in room.users],
-             'chats': [c.dict() for c in room.chats],
-             'round': 0 }, 200
+    try:
+        user = User.get(u_key)
+    except ValidationError: return { 'err': 'User not found' }, 404
+
+    users = [u.dict() for u in room.users]
+    chats = [c.dict() for c in room.chats]
+    for u in users: del u['pk']
+    #for c in chats: 
+    #    del c.author['pk']
+
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'round': 0 }, 200
 
 
-@app.route('/lobby/msg', methods=['POST'])
-def message(room_id: int):
+@app.route('/lobby/<r_key>/msg', methods=['POST'])
+def message(r_key: int):
+    try:
+        room = Room.get(r_key)
+    except ValidationError: return { 'err': 'Room not found' }, 404
 
-    return {}
+    if request.json['u_key'] not in [u.pk for u in room.users]:
+        return { 'err': 'User not found' }, 404
+    
+    chat = Chat(**{ 'cID': len(room.chats) + 1, 'stamp': time.time(), 'author': User.get(request.json['u_key']), 'message': request.json['message'] })
+    chat.save()
+    room.chats.append(chat)
+    room.save()
+
+    return { 'success': 'message sent' }, 200
 
 @app.route('/lobby/ready', methods=['POST'])
 def ready(room_id: int):

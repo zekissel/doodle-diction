@@ -42,7 +42,7 @@ export interface UserInfo {
 export interface ChatInfo {
     cID: string;
     stamp: Date;
-    author: string;
+    author: UserInfo;
     message: string;
 }
 

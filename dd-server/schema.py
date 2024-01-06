@@ -13,7 +13,7 @@ class Game(EmbeddedJsonModel):
 class Chat(EmbeddedJsonModel):
     cID: str = Field(index=True)
     stamp: str = Field(index=True)
-    author: User = Field(index=True)
+    author: User
     message: str
 
 class Room(JsonModel):

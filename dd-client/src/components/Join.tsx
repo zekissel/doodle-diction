@@ -22,7 +22,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
     // fetch list of rooms every 3 seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            setProgress(DataState.Loading);
+            // setProgress(DataState.Loading);
             fetch(`${API_URL}/join`)
                 .then(res => res.json())
                 .then(dat => {
@@ -57,8 +57,8 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
             .then(dat => {
                 if ('err' in dat) setHError(dat['err'])
                 else {
-                    setRKey(dat['rKey']);
-                    setUKey(dat['uKey']);
+                    setRKey(dat['r_key']);
+                    setUKey(dat['u_key']);
                     setGame!(roomName);
                 }
             })
@@ -83,8 +83,8 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
                 if ('err' in dat) setJError(dat['err'])
                 else if ('auth' in dat) setVerify(true);
                 else {
-                    setRKey(dat['rKey']);
-                    setUKey(dat['uKey']);
+                    setRKey(dat['r_key']);
+                    setUKey(dat['u_key']);
                     setGame!(roomName);
                 }
             })
@@ -112,8 +112,8 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
             <fieldset>
                 <legend>Join</legend>
                 <li>
-                    { !verify && <input type='text' name='rID' placeholder='Room name' />}
-                    { verify && <input type='text' name='pw' placeholder='Enter password' />}
+                    { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)} />}
+                    { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setPass(e.target.value)} />}
                 </li>
                 <li><button onClick={joinGame}>Connect</button></li>
                 { joinError !== `` && <li>{ joinError }</li> }

@@ -4,6 +4,11 @@ import Game from "./Game";
 
 function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
 
+    const [uID, setUID] = useState(``);
+    const [user, setUser] = useState(`Zane`);
+    const [ready, setReady] = useState(false);
+    const [curMessage, setMessage] = useState(``);
+
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
 
@@ -15,27 +20,46 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                'rKey': rKey,
-                'uKey': uKey,
+                'r_key': rKey,
+                'u_key': uKey,
             })
         })
             .then(() => setJoin())
             .catch(err => console.error(err))
     }
 
+    const sendMessage = async () => {
+        if (curMessage === ``) return
+        fetch(`${API_URL}/lobby/${rKey}/msg`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                'r_key': rKey,
+                'u_key': uKey,
+                'message': curMessage,
+            })
+        })
+            .then(() => setChats([...chats, { 'cID': String(chats.length + 1), 'stamp': new Date(Date.now()),'author': { 'uID': uID, 'name': user, 'ready': ready }, 'message': curMessage }]))
+            .then(() => setMessage(``))
+            .catch(err => console.error(err))
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch(`${API_URL}/lobby/${rKey}`)
+            fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
                 .then(res => res.json())
                 .then(dat => {
                     setUsers(dat['users']);
                     setChats(dat['chats']);
+                    setUID(dat['uID']);
                 })
                 .catch(err => console.error(err))
         }, 2000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [rKey, uKey]);
 
     return (
         <main>
@@ -60,8 +84,10 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             
             <fieldset><legend>Chat</legend>
                 <ul>
-                    { chats.map((chat, i) => <li key={i}>{ chat.author }: { chat.message }</li>) }
+                    { chats.map((chat, i) => <li key={i}>{ chat.author.uID === uID ? 'You' : chat.author.name }: { chat.message }</li>) }
                 </ul>
+                <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage}/>
+                <button onClick={sendMessage}>Send</button>
             </fieldset>
 
             <fieldset>
