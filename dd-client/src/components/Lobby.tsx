@@ -41,19 +41,34 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
                 'message': curMessage,
             })
         })
-            .then(() => setChats([...chats, { 'cID': String(chats.length + 1), 'stamp': new Date(Date.now()),'author': { 'uID': uID, 'name': user, 'ready': ready }, 'message': curMessage }]))
+            .then(() => {
+                let stamp = new Date(Date.now()).toLocaleTimeString().split(` `);
+                if (stamp[1] === `PM`) {
+                    let time = stamp[0].split(`:`);
+                    time[0] = String(Number(time[0]) + 12);
+                    stamp[0] = time.join(`:`);
+                }
+                setChats([...chats, { 'cID': String(chats.length + 1), 'stamp': stamp[0],'author': { 'uID': uID, 'name': user, 'ready': ready }, 'message': curMessage }])
+            })
             .then(() => setMessage(``))
             .catch(err => console.error(err))
     }
 
+    /* 
+        update lobby info from serveer: 
+        personal user info, other users' info, chat info, meta game info (rounds)
+    */
     useEffect(() => {
         const interval = setInterval(() => {
             fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
                 .then(res => res.json())
                 .then(dat => {
-                    setUsers(dat['users']);
-                    setChats(dat['chats']);
-                    setUID(dat['uID']);
+                    if ('err' in dat) setJoin();
+                    else {
+                        setUsers(dat['users']);
+                        setChats(dat['chats']);
+                        setUID(dat['uID']);
+                    }
                 })
                 .catch(err => console.error(err))
         }, 2000);
@@ -84,7 +99,7 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             
             <fieldset><legend>Chat</legend>
                 <ul>
-                    { chats.map((chat, i) => <li key={i}>{ chat.author.uID === uID ? 'You' : chat.author.name }: { chat.message }</li>) }
+                    { chats.map((chat, i) => <li key={i}>{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) }
                 </ul>
                 <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage}/>
                 <button onClick={sendMessage}>Send</button>

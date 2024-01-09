@@ -1,4 +1,4 @@
-import time
+import datetime
 
 from pydantic import ValidationError
 from flask import Flask, request
@@ -112,7 +112,14 @@ def message(r_key: int):
     if request.json['u_key'] not in [u.pk for u in room.users]:
         return { 'err': 'User not found' }, 404
     
-    chat = Chat(**{ 'cID': len(room.chats) + 1, 'stamp': time.time(), 'author': User.get(request.json['u_key']), 'message': request.json['message'] })
+    current_time = datetime.datetime.now()
+    formatted_hour = current_time.strftime('%H')
+    formatted_hour = int(formatted_hour) - 5
+    if formatted_hour < 0: formatted_hour += 24
+    formatted_time = current_time.strftime("%M:%S")
+    formatted_time = str(formatted_hour) + ':' + formatted_time
+    assert(type(formatted_time) == str)
+    chat = Chat(**{ 'cID': len(room.chats) + 1, 'stamp': formatted_time, 'author': User.get(request.json['u_key']), 'message': request.json['message'] })
     chat.save()
     room.chats.append(chat)
     room.save()
