@@ -37,7 +37,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     console.error(err)
                     setProgress(DataState.Error);
                 })
-        }, 20000);
+        }, 2000);
 
         return () => clearInterval(interval);
     }, [rKey, uKey, uID, ready]);
@@ -55,7 +55,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
             })
         })
             .then(() => setJoin())
-            .catch(err => console.error(err))
+            .catch(() => setJoin())
     }
 
     const signalReady = async () => {
@@ -109,46 +109,57 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
     return (
         <main>
-            { confirmExit && 
-                <div>
-                    <span>Are you sure you want to exit room?</span>
-                    <button onClick={exitRoom}>Confirm</button>
-                    <button onClick={() => setExit(false)}>Cancel</button>
-                </div>
-            }
+            <div className="lobbypanel">
+                { confirmExit && 
+                    <div>
+                        <span>Exit to menu? </span>
+                        <button onClick={exitRoom}>Confirm</button>
+                        <button onClick={() => setExit(false)}>Cancel</button>
+                    </div>
+                }
 
-            <fieldset><legend><h3>Room: { name }</h3></legend>
-                <button onClick={() => setExit(true)}>Exit</button>
-                <button onClick={signalReady}>Ready</button>
-            </fieldset>
-            
-            <fieldset><legend>Players</legend>
-                <ul>
-                    { progress === DataState.Loading && <li>Loading...</li> }
-                    { progress === DataState.Error && <li>Failed to load</li> }
-                    { progress === DataState.Success &&
-                        users.map((user, i) => <li key={i}>{ user.name } - { user.ready ? 'Ready' : 'Not Ready' }</li>) 
-                    }
-                </ul>
-            </fieldset>
-            
-            <fieldset><legend>Chat</legend>
-                <ul>
-                    { progress === DataState.Loading && <li>Loading...</li> }
-                    { progress === DataState.Error && <li>Failed to load</li> }
-                    { progress === DataState.Success &&
-                        chats.map((chat, i) => <li key={i}>{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) 
-                    }
-                </ul>
-                <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} />
-                <button onClick={sendMessage}>Send</button>
-            </fieldset>
+                <fieldset className="lobbyfield" id="roombox"><legend><h3>Room: { name }</h3></legend>
+                    <button onClick={() => setExit(true)}>Exit</button>
+                </fieldset>
+                
+                <fieldset className="lobbyfield" id="playerbox"><legend>Players</legend>
+                    <ul id="players">
+                        { progress === DataState.Loading && <li>Loading...</li> }
+                        { progress === DataState.Error && <li>Failed to load</li> }
+                        { progress === DataState.Success &&
+                            users.map((user, i) => 
+                            <li key={i} className="playerentry">
+                                { user.name }
 
-            <fieldset>
-                <legend>
+                                { user.uID === uID ?
+                                    <button onClick={signalReady}>{ ready ? 'Cancel' : 'Ready Up' }</button>
+                                    : <span> - { user.ready ? 'Ready' : 'Not Ready' }</span>
+                                }
+                            </li>) 
+                        }
+                    </ul>
+                </fieldset>
+                
+                <fieldset className="lobbyfield" id="chatbox"><legend>Chat</legend>
+                    <ul id="chat">
+                        { progress === DataState.Loading && <li>Loading...</li> }
+                        { progress === DataState.Error && <li>Failed to load</li> }
+                        { progress === DataState.Success &&
+                            chats.map((chat, i) => <li key={i} className="chatentry">{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) 
+                        }
+                    </ul>
+                    <div id="chatinput">
+                        <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} />
+                        <button onClick={sendMessage}>Send</button>
+                    </div>
+                </fieldset>
+            </div>
+
+            <fieldset className="gamefield">
+                <legend><h3>
                     { curRound === 0 && 'Pregame' }
                     { curRound > 0 && `Round ${curRound}` }
-                </legend>
+                </h3></legend>
                 <Game />
             </fieldset>
         </main>

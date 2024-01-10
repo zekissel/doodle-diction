@@ -40,3 +40,58 @@ fieldset {
 .joinbox, .hostbox, .pubbox {
   height: 8rem;
 }
+
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.lobbypanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.lobbyfield {
+  width: 20rem;
+  min-height: 5rem;
+}
+
+.gamefield {
+  width: 36rem;
+  min-height: 24rem;
+}
+
+#playerbox {
+  max-height: 8rem;
+}
+
+#chatbox {
+  max-height: 10rem;
+  margin-bottom: 1rem;
+}
+
+#chat {
+  height: 8rem;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+#players {
+  height: 5rem;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.chatentry, .playerentry {
+  width: 100%;
+  text-align: left;
+}
+
+#chatinput {
+  width: 100%;
+}

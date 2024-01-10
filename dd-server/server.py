@@ -71,6 +71,7 @@ def join():
     # otherwise, if POST, attempt to add use to room
     try:
         query = Room.find((Room.name == request.json['name'])).all()
+        if len(query) == 0: return { 'err': 'Room not found' }, 404
         room = query[0]
     except ValidationError: return { 'err': 'Invalid room name' }
 
@@ -78,10 +79,11 @@ def join():
     if len(room.users) >= capacity:
         return { 'err': 'Room is full' }, 403
     
-    if 'pw' in room.dict().keys():
-        if 'pw' in request.form.keys() and room['pw'] != request.form['pw']:
-            if request.form['pw'] == '': return { 'auth': 'Enter room password' }, 401
-            else: return { 'err': 'Incorrect password' }, 403
+    formpw = request.json['pw']
+    roompw = room.pw if room.pw != None else ''
+    if formpw != roompw:
+        if formpw == '': return { 'auth': 'Enter room password', roompw: formpw }, 401
+        else: return { 'err': 'Incorrect password' }, 403
 
     uID = len(room.users)
     user = User(**{ 'uID': uID, 'name': request.json['user'], 'ready': False })
