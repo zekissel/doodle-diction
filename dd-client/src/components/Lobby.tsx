@@ -7,6 +7,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     const [ready, setReady] = useState(false);
     const [curMessage, setMessage] = useState(``);
 
+    const [curRound, setRound] = useState(0);
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
     const [progress, setProgress] = useState<DataState>(DataState.Loading);
@@ -27,6 +28,8 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         setUsers(dat['users']);
                         setChats(dat['chats']);
                         setUID(dat['uID']);
+                        setReady(dat['ready']);
+                        setRound(dat['round']);
                         setProgress(DataState.Success);
                     }
                 })
@@ -37,7 +40,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [rKey, uKey, uID]);
+    }, [rKey, uKey, uID, ready]);
 
 
     const exitRoom = async () => {
@@ -52,6 +55,22 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
             })
         })
             .then(() => setJoin())
+            .catch(err => console.error(err))
+    }
+
+    const signalReady = async () => {
+        fetch(`${API_URL}/ready`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                'r_key': rKey,
+                'u_key': uKey,
+                'ready': !ready,
+            })
+        })
+            .then(() => setReady(!ready))
             .catch(err => console.error(err))
     }
 
@@ -100,7 +119,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
             <fieldset><legend><h3>Room: { name }</h3></legend>
                 <button onClick={() => setExit(true)}>Exit</button>
-                <button>Ready</button>
+                <button onClick={signalReady}>Ready</button>
             </fieldset>
             
             <fieldset><legend>Players</legend>
@@ -108,7 +127,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     { progress === DataState.Loading && <li>Loading...</li> }
                     { progress === DataState.Error && <li>Failed to load</li> }
                     { progress === DataState.Success &&
-                        users.map((user, i) => <li key={i}>{ user.name }</li>) 
+                        users.map((user, i) => <li key={i}>{ user.name } - { user.ready ? 'Ready' : 'Not Ready' }</li>) 
                     }
                 </ul>
             </fieldset>
@@ -127,7 +146,8 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
             <fieldset>
                 <legend>
-                    Pregame
+                    { curRound === 0 && 'Pregame' }
+                    { curRound > 0 && `Round ${curRound}` }
                 </legend>
                 <Game />
             </fieldset>

@@ -41,7 +41,6 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
         voidError();
         if (roomName === ``) return
         // private rooms have negative capacity (not necessarily password enforced)
-        if (isPrivate) setCap(capacity * -1);
         fetch(`${API_URL}/host`, {
             method: "POST",
             headers: {
@@ -50,7 +49,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             body: JSON.stringify({
                 'name': roomName,
                 'pw': roomPass,
-                'cap': capacity,
+                'cap': isPrivate ? capacity * -1 : capacity,
                 'host': user,
             })
         })
@@ -107,7 +106,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                     <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
                 </li>
 
-                { isPrivate && <li><input type='text' name='rPW' placeholder='Password' onChange={e => setPass(e.target.value)}/></li> }
+                { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setPass(e.target.value)}/></li> }
                 <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/><label>Max players: { capacity }</label></li>
     
                 <li><button onClick={hostGame}>Create</button></li>
