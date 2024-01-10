@@ -71,13 +71,18 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             })
         })
             .then(() => {
-                let stamp = new Date(Date.now()).toLocaleTimeString().split(` `);
+                const stamp = new Date(Date.now()).toLocaleTimeString().split(` `);
                 if (stamp[1] === `PM`) {
-                    let time = stamp[0].split(`:`);
+                    const time = stamp[0].split(`:`);
                     time[0] = String(Number(time[0]) + 12);
                     stamp[0] = time.join(`:`);
                 }
-                setChats([...chats, { 'cID': String(chats.length + 1), 'stamp': stamp[0],'author': { 'uID': uID, 'name': user, 'ready': ready }, 'message': curMessage }])
+                setChats([...chats, { 
+                        'cID': String(chats.length + 1), 
+                        'stamp': stamp[0],
+                        'author': { 'uID': uID, 'name': user, 'ready': ready }, 
+                        'message': curMessage 
+                }])
             })
             .then(() => setMessage(``))
             .catch(err => console.error(err))

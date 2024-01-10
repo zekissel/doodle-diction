@@ -102,10 +102,9 @@ def lobby(r_key: str, u_key: str):
     users = [u.dict() for u in room.users]
     chats = [c.dict() for c in room.chats]
     for u in users: del u['pk']
-    #for c in chats: 
-    #    del c.author['pk']
+    for c in chats: del c['author']['pk']
 
-    return { 'users': users, 'chats': chats, 'uID': user.uID, 'round': 0 }, 200
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'round': room.g_round }, 200
 
 
 @app.route('/lobby/<r_key>/msg', methods=['POST'])
@@ -125,7 +124,12 @@ def message(r_key: int):
     formatted_time = current_time.strftime("%M:%S")
     formatted_time = str(formatted_hour) + ':' + formatted_time
     
-    chat = Chat(**{ 'cID': len(room.chats) + 1, 'stamp': formatted_time, 'author': User.get(request.json['u_key']), 'message': request.json['message'] })
+    chat = Chat(**{ 
+        'cID': len(room.chats) + 1, 
+        'stamp': formatted_time, 
+        'author': User.get(request.json['u_key']), 
+        'message': request.json['message'] 
+    })
     chat.save()
     room.chats.append(chat)
     room.save()
