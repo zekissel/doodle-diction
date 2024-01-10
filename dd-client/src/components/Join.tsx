@@ -4,8 +4,10 @@ import { API_URL, DataState, JoinProps, RoomInfo } from "../typedef";
 function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
     /* variables used to create/join room */
-    const [roomName, setRoom] = useState(``);
-    const [roomPass, setPass] = useState(``);
+    const [hostName, setHostName] = useState(``);
+    const [hostPass, setHostPass] = useState(``);
+    const [joinName, setJoinName] = useState(``);
+    const [joinPass, setJoinPass] = useState(``);
     const [isPrivate, setPrivate] = useState(false);
     const [capacity, setCap] = useState(6);
     // prompt users for rooms with passwords != ''
@@ -39,7 +41,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
     const hostGame = async () => {
         voidError();
-        if (roomName === ``) return
+        if (hostName === ``) return
         // private rooms have negative capacity (not necessarily password enforced)
         fetch(`${API_URL}/host`, {
             method: "POST",
@@ -47,8 +49,8 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                'name': roomName,
-                'pw': roomPass,
+                'name': hostName,
+                'pw': hostPass,
                 'cap': isPrivate ? capacity * -1 : capacity,
                 'host': user,
             })
@@ -59,7 +61,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 else {
                     setRKey(dat['r_key']);
                     setUKey(dat['u_key']);
-                    setGame(roomName, dat['u_id']);
+                    setGame(hostName, dat['u_id']);
                 }
             })
             .catch(err => console.error(err))
@@ -67,15 +69,15 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
     const joinGame = async () => {
         voidError();
-        if (roomName === ``) return
-        if (verify && roomPass === ``) return
+        if (joinName === ``) return
+        if (verify && joinPass === ``) return
 
         fetch(`${API_URL}/join`, {
             method: "POST",
             headers: { "Content-Type": "application/json", }, 
             body: JSON.stringify({
-                'name': roomName,
-                'pw': roomPass,
+                'name': joinName,
+                'pw': joinPass,
                 'user': user,
             })
         })
@@ -86,7 +88,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 else {
                     setRKey(dat['r_key']);
                     setUKey(dat['u_key']);
-                    setGame(roomName, dat['u_id']);
+                    setGame(joinName, dat['u_id']);
                 }
             })
             .catch(err => console.error(err))
@@ -102,11 +104,11 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             <fieldset className="hostbox">
                 <legend>Host</legend>
                 <li>
-                    <input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)}/>
+                    <input type='text' name='rID' placeholder='Room name' onChange={e => setHostName(e.target.value)} defaultValue={hostName}/>
                     <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
                 </li>
 
-                { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setPass(e.target.value)}/></li> }
+                { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setHostPass(e.target.value)}/></li> }
                 <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/><label>Max players: { capacity }</label></li>
     
                 <li><button onClick={hostGame}>Create</button></li>
@@ -117,8 +119,8 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             <fieldset className="joinbox">
                 <legend>Join</legend>
                 <li>
-                    { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)} />}
-                    { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setPass(e.target.value)} />}
+                    { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
+                    { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
                 </li>
                 <li><button onClick={joinGame}>Connect</button></li>
                 { joinError !== `` && <li>{ joinError }</li> }

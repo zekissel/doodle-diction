@@ -37,7 +37,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     console.error(err)
                     setProgress(DataState.Error);
                 })
-        }, 2000);
+        }, 20000);
 
         return () => clearInterval(interval);
     }, [rKey, uKey, uID, ready]);

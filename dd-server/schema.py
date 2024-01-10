@@ -1,5 +1,5 @@
 from redis_om import JsonModel, EmbeddedJsonModel, Field, Migrator, get_redis_connection
-from typing import List
+from typing import List, Optional
 
 class User(EmbeddedJsonModel):
     uID: str = Field(index=True)
@@ -19,7 +19,7 @@ class Chat(EmbeddedJsonModel):
 class Room(JsonModel):
     rID: int = Field(index=True)
     name: str = Field(index=True)
-    pw: str
+    pw: Optional[str] = Field(index=False, default='')
 
     g_round: int = Field(index=False, default=0)
     cap: int = Field(index=True)
