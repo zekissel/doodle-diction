@@ -54,6 +54,7 @@ def leave():
 @app.route('/join', methods=['GET', 'POST'])
 def join():
 
+    # return list of publicly avaible games
     if request.method == 'GET':
         rooms = Room.find(Room.cap > 0).all()
         resp = [r.dict() for r in rooms]
@@ -65,10 +66,14 @@ def join():
                 del u['pk']
         return { 'rooms': resp }, 200
 
+    # otherwise, if POST, attempt to add use to room
     try:
         room = Room.find((Room.name == request.json['name'])).all()
         room = room[0]
     except ValidationError: return { 'err': 'Invalid room name' }
+
+    if len(room.users) >= room.cap:
+        return { 'err': 'Room is full' }, 403
 
     if 'pw' in room and room['pw'] != request.form['pw']:
         if request.form['pw'] == '': return { 'auth': 'Enter room password' }, 401
@@ -112,13 +117,14 @@ def message(r_key: int):
     if request.json['u_key'] not in [u.pk for u in room.users]:
         return { 'err': 'User not found' }, 404
     
+    # format timestamp
     current_time = datetime.datetime.now()
     formatted_hour = current_time.strftime('%H')
     formatted_hour = int(formatted_hour) - 5
     if formatted_hour < 0: formatted_hour += 24
     formatted_time = current_time.strftime("%M:%S")
     formatted_time = str(formatted_hour) + ':' + formatted_time
-    assert(type(formatted_time) == str)
+    
     chat = Chat(**{ 'cID': len(room.chats) + 1, 'stamp': formatted_time, 'author': User.get(request.json['u_key']), 'message': request.json['message'] })
     chat.save()
     room.chats.append(chat)

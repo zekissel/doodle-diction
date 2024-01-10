@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { API_URL, ChatInfo, GameInfo, LobbyProps, UserInfo } from "../typedef";
+import { API_URL, ChatInfo, GameInfo, LobbyProps, UserInfo, DataState } from "../typedef";
 import Game from "./Game";
 
 function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
@@ -11,8 +11,37 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
 
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
-
+    const [progress, setProgress] = useState<DataState>(DataState.Loading);
+    
     const [confirmExit, setExit] = useState(false);
+
+    /* 
+        update lobby info from serveer: 
+        personal user info, other users' info, chat info, meta game info (rounds)
+    */
+        useEffect(() => {
+            const interval = setInterval(() => {
+                fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
+                    .then(res => res.json())
+                    .then(dat => {
+                        if ('err' in dat) setJoin();
+                        else {
+                            setUsers(dat['users']);
+                            setChats(dat['chats']);
+                            setUID(dat['uID']);
+                            setProgress(DataState.Success);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        setProgress(DataState.Error);
+                    })
+            }, 2000);
+    
+            return () => clearInterval(interval);
+        }, [rKey, uKey]);
+
+
     const exitRoom = async () => {
         fetch(`${API_URL}/exit`, {
             method: "POST",
@@ -54,27 +83,6 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             .catch(err => console.error(err))
     }
 
-    /* 
-        update lobby info from serveer: 
-        personal user info, other users' info, chat info, meta game info (rounds)
-    */
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
-                .then(res => res.json())
-                .then(dat => {
-                    if ('err' in dat) setJoin();
-                    else {
-                        setUsers(dat['users']);
-                        setChats(dat['chats']);
-                        setUID(dat['uID']);
-                    }
-                })
-                .catch(err => console.error(err))
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, [rKey, uKey]);
 
     return (
         <main>
@@ -93,13 +101,21 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
             
             <fieldset><legend>Players</legend>
                 <ul>
-                    { users.map((user, i) => <li key={i}>{ user.name }</li>) }
+                    { progress === DataState.Loading && <li>Loading...</li> }
+                    { progress === DataState.Error && <li>Failed to load</li> }
+                    { progress === DataState.Success &&
+                        users.map((user, i) => <li key={i}>{ user.name }</li>) 
+                    }
                 </ul>
             </fieldset>
             
             <fieldset><legend>Chat</legend>
                 <ul>
-                    { chats.map((chat, i) => <li key={i}>{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) }
+                    { progress === DataState.Loading && <li>Loading...</li> }
+                    { progress === DataState.Error && <li>Failed to load</li> }
+                    { progress === DataState.Success &&
+                        chats.map((chat, i) => <li key={i}>{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) 
+                    }
                 </ul>
                 <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage}/>
                 <button onClick={sendMessage}>Send</button>

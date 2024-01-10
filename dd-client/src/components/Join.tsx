@@ -97,19 +97,23 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
         <menu>
             <li onClick={setMain}>Back to Menu</li>
 
-            <fieldset>
+            <div className="menurow">
+            <fieldset className="hostbox">
                 <legend>Host</legend>
-                <li><input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)}/></li>
+                <li>
+                    <input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)}/>
+                    <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
+                </li>
+
                 { isPrivate && <li><input type='text' name='rPW' placeholder='Password' onChange={e => setPass(e.target.value)}/></li> }
-                <li><input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>private</label></li>
-                <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/><label>({ capacity }) max. players</label></li>
+                <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/><label>Max players: { capacity }</label></li>
     
                 <li><button onClick={hostGame}>Create</button></li>
 
                 { hostError !== `` && <li>{ hostError }</li> }
             </fieldset>
 
-            <fieldset>
+            <fieldset className="joinbox">
                 <legend>Join</legend>
                 <li>
                     { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setRoom(e.target.value)} />}
@@ -118,8 +122,9 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
                 <li><button onClick={joinGame}>Connect</button></li>
                 { joinError !== `` && <li>{ joinError }</li> }
             </fieldset>
+            </div>
 
-            <fieldset>
+            <fieldset className="pubbox">
                 <legend>Public Games</legend>
                     <ul>
                         { progress === DataState.Loading && <li>Loading public games</li> }
