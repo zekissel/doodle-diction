@@ -1,5 +1,5 @@
 import './App.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MenuState } from './typedef';
 import Join from './components/Join';
 import Learn from './components/Learn';
@@ -16,24 +16,33 @@ function App() {
     setRoomKey(``); 
     setUserKey(``); 
   };
+  const enterToJoin = (e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === `Enter`) setJoinIfNameSet(); }
+  const setJoinIfNameSet = () => { 
+    if (user !== ``) goJoin();
+    else alert(`Please enter a nickname!`);
+  }
 
   const [curRoom, setCurRoom] = useState(``);
 
   const [roomKey, setRoomKey] = useState(``);
   const [userKey, setUserKey] = useState(``);
   const [uID, setUID] = useState(``);
+
   const [user, setUser] = useState(``);
-  
+  const saveUser = (e: React.ChangeEvent<HTMLInputElement>) => { localStorage.setItem(`user`, e.target.value); setUser(e.target.value); }
+  useEffect(() => {
+    setUser(localStorage.getItem(`user`) || ``);
+  }, []);
 
   return (
       <>
         <h1 onClick={menu !== MenuState.Game ? goBack : undefined}>Doodle Diction</h1>
         { menu === MenuState.Main &&
           <menu>
-            <li onClick={() => setMenu(MenuState.Join)}>Play</li>
+            <li onClick={setJoinIfNameSet}>Play</li>
             <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
             <li>
-              <input type='text' placeholder='Nickname' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUser(e.target.value)}/>
+              <input type='text' placeholder='Nickname' onChange={saveUser} defaultValue={user} onKeyDown={enterToJoin} />
             </li>
           </menu>
         }

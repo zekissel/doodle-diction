@@ -71,7 +71,8 @@ def join():
         room = room[0]
     except ValidationError: return { 'err': 'Invalid room name' }
 
-    if len(room.users) >= room.cap:
+    capacity = room.cap if room.cap > 0 else -1 * room.cap
+    if len(room.users) >= capacity:
         return { 'err': 'Room is full' }, 403
 
     if 'pw' in room and room['pw'] != request.form['pw']:

@@ -55,6 +55,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
             .catch(err => console.error(err))
     }
 
+    const enterToSend = (e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === `Enter`) sendMessage(); }
     const sendMessage = async () => {
         if (curMessage === ``) return
         fetch(`${API_URL}/lobby/${rKey}/msg`, {
@@ -120,7 +121,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         chats.map((chat, i) => <li key={i}>{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) 
                     }
                 </ul>
-                <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage}/>
+                <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} />
                 <button onClick={sendMessage}>Send</button>
             </fieldset>
 
