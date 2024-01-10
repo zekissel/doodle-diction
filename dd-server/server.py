@@ -19,17 +19,16 @@ def host():
         return { 'err': 'Room key in use' }
     
     try:
-        host = User(**{ 'uID': 0, 'name': 'Player 1', 'ready': False })
+        host = User(**{ 'uID': 0, 'name': request.json['host'], 'ready': False })
         host.save()
 
         request.json['host'] = host
-        rid = cache.incr('count')
-        request.json['rID'] = rid
+        request.json['rID'] = cache.incr('count')
         
         room = Room(**request.json)
         room.users.append(host)
         room.save()
-        return { 'r_key': room.pk, 'u_key': host.pk }, 200
+        return { 'r_key': room.pk, 'u_key': host.pk, 'u_id': host.uID }, 200
     
     except ValidationError: return { 'err': 'Bad request' }, 400
     
@@ -79,14 +78,14 @@ def join():
         if request.form['pw'] == '': return { 'auth': 'Enter room password' }, 401
         else: return { 'err': 'Incorrect password' }, 403
 
-    uID = len(room.users) + 1
-    user = User(**{ 'uID': uID, 'name': 'Player {}'.format(uID + 1), 'ready': False })
+    uID = len(room.users)
+    user = User(**{ 'uID': uID, 'name': request.json['user'], 'ready': False })
     user.save()
 
     room.users.append(user)
     room.save()
 
-    return { 'r_key': room.pk, 'u_key': user.pk }, 200
+    return { 'r_key': room.pk, 'u_key': user.pk, 'u_id': user.uID }, 200
 
 
 @app.route('/lobby/<r_key>/<u_key>', methods=['GET'])

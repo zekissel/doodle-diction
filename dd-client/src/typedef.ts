@@ -8,9 +8,10 @@ export interface MenuProps {
 
 export interface JoinProps {
     setMain: () => void;
-    setGame: ((key: string) => void) | undefined;
+    setGame: ((key: string, id: string) => void);
     setRKey: React.Dispatch<React.SetStateAction<string>>;
     setUKey: React.Dispatch<React.SetStateAction<string>>;
+    user: string;
 }
 
 export interface LobbyProps {
@@ -18,6 +19,9 @@ export interface LobbyProps {
     name: string;
     rKey: string;
     uKey: string;
+    uID: string;
+    setUID: React.Dispatch<React.SetStateAction<string>>;
+    user: string;
 }
 
 export interface RoomInfo {

@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { MenuState } from './typedef';
 import Join from './components/Join';
 import Learn from './components/Learn';
@@ -9,7 +9,7 @@ function App() {
 
   const [menu, setMenu] = useState<MenuState>(MenuState.Main);
   const goBack = () => { setMenu(MenuState.Main) };
-  const goForward = (name: string) => { setCurRoom(name); setMenu(MenuState.Game) };
+  const goForward = (name: string, id: string) => { setCurRoom(name); setUID(id); setMenu(MenuState.Game) };
   const goJoin = () => { 
     setMenu(MenuState.Join); 
     setCurRoom(``); 
@@ -18,8 +18,11 @@ function App() {
   };
 
   const [curRoom, setCurRoom] = useState(``);
+
   const [roomKey, setRoomKey] = useState(``);
   const [userKey, setUserKey] = useState(``);
+  const [uID, setUID] = useState(``);
+  const [user, setUser] = useState(``);
   
 
   return (
@@ -29,14 +32,17 @@ function App() {
           <menu>
             <li onClick={() => setMenu(MenuState.Join)}>Play</li>
             <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
+            <li>
+              <input type='text' placeholder='Nickname' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUser(e.target.value)}/>
+            </li>
           </menu>
         }
 
-        { menu === MenuState.Join && <Join setMain={goBack} setGame={goForward} setRKey={setRoomKey} setUKey={setUserKey} /> }
+        { menu === MenuState.Join && <Join setMain={goBack} setGame={goForward} setRKey={setRoomKey} setUKey={setUserKey} user={user} /> }
         { menu === MenuState.Learn && <Learn setMain={goBack} /> }
         
         { menu === MenuState.Game && 
-          <Lobby setJoin={goJoin} name={curRoom} rKey={roomKey} uKey={userKey} />
+          <Lobby setJoin={goJoin} name={curRoom} rKey={roomKey} uKey={userKey} uID={uID} setUID={setUID} user={user}/>
         }
       </>
   )

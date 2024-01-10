@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL, DataState, JoinProps, RoomInfo } from "../typedef";
 
-function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
+function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
     /* variables used to create/join room */
     const [roomName, setRoom] = useState(``);
@@ -51,6 +51,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
                 'name': roomName,
                 'pw': roomPass,
                 'cap': capacity,
+                'host': user,
             })
         })
             .then(res => res.json())
@@ -59,7 +60,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
                 else {
                     setRKey(dat['r_key']);
                     setUKey(dat['u_key']);
-                    setGame!(roomName);
+                    setGame(roomName, dat['u_id']);
                 }
             })
             .catch(err => console.error(err))
@@ -76,6 +77,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
             body: JSON.stringify({
                 'name': roomName,
                 'pw': roomPass,
+                'user': user,
             })
         })
             .then(res => res.json())
@@ -85,7 +87,7 @@ function Join ({ setMain, setGame, setRKey, setUKey }: JoinProps) {
                 else {
                     setRKey(dat['r_key']);
                     setUKey(dat['u_key']);
-                    setGame!(roomName);
+                    setGame(roomName, dat['u_id']);
                 }
             })
             .catch(err => console.error(err))

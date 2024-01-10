@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { API_URL, ChatInfo, GameInfo, LobbyProps, UserInfo, DataState } from "../typedef";
+import React, { useState, useEffect } from "react";
+import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
 import Game from "./Game";
 
-function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
+function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
-    const [uID, setUID] = useState(``);
-    const [user, setUser] = useState(`Zane`);
     const [ready, setReady] = useState(false);
     const [curMessage, setMessage] = useState(``);
 
@@ -19,27 +17,27 @@ function Lobby ({ setJoin, name, rKey, uKey }: LobbyProps) {
         update lobby info from serveer: 
         personal user info, other users' info, chat info, meta game info (rounds)
     */
-        useEffect(() => {
-            const interval = setInterval(() => {
-                fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
-                    .then(res => res.json())
-                    .then(dat => {
-                        if ('err' in dat) setJoin();
-                        else {
-                            setUsers(dat['users']);
-                            setChats(dat['chats']);
-                            setUID(dat['uID']);
-                            setProgress(DataState.Success);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err)
-                        setProgress(DataState.Error);
-                    })
-            }, 2000);
-    
-            return () => clearInterval(interval);
-        }, [rKey, uKey]);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
+                .then(res => res.json())
+                .then(dat => {
+                    if ('err' in dat) setJoin();
+                    else {
+                        setUsers(dat['users']);
+                        setChats(dat['chats']);
+                        setUID(dat['uID']);
+                        setProgress(DataState.Success);
+                    }
+                })
+                .catch(err => {
+                    console.error(err)
+                    setProgress(DataState.Error);
+                })
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [rKey, uKey, uID]);
 
 
     const exitRoom = async () => {
