@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
 import Game from "./Game";
 
@@ -13,6 +13,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     const [progress, setProgress] = useState<DataState>(DataState.Loading);
     
     const [confirmExit, setExit] = useState(false);
+    const endChat = useRef<HTMLDivElement>(null);
 
     /* 
         update lobby info from serveer: 
@@ -106,6 +107,10 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
             .catch(err => console.error(err))
     }
 
+    const altColor = { backgroundColor: `#1c1c1c`};
+    useEffect(() => {
+        endChat.current?.scrollIntoView({ behavior: `smooth` });
+    }, [chats]);
 
     return (
         <main>
@@ -128,13 +133,13 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         { progress === DataState.Error && <li>Failed to load</li> }
                         { progress === DataState.Success &&
                             users.map((user, i) => 
-                            <li key={i} className="playerentry">
+                            <li key={i} className="playerentry" style={i%2==0?undefined:altColor}> 
                                 { user.name }
-
+                                <span className="playerinfo">
                                 { user.uID === uID ?
                                     <button onClick={signalReady}>{ ready ? 'Cancel' : 'Ready Up' }</button>
-                                    : <span> - { user.ready ? 'Ready' : 'Not Ready' }</span>
-                                }
+                                    : <span>{ user.ready ? 'Ready' : 'Not Ready' }</span>
+                                }</span>
                             </li>) 
                         }
                     </ul>
@@ -145,8 +150,11 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         { progress === DataState.Loading && <li>Loading...</li> }
                         { progress === DataState.Error && <li>Failed to load</li> }
                         { progress === DataState.Success &&
-                            chats.map((chat, i) => <li key={i} className="chatentry">{ chat.message } - { chat.author.uID === uID ? 'You' : chat.author.name }:{ chat.stamp.toString() }</li>) 
+                            
+                            chats.map((chat, i) => <li key={i} className="chatentry" style={i%2==0?undefined:altColor}>{ chat.message } <span className="chatinfo"> { chat.author.uID === uID ? 'You' : chat.author.name }@{ chat.stamp.toString() }</span></li>)
+                            
                         }
+                        <div ref={endChat}></div>
                     </ul>
                     <div id="chatinput">
                         <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} />

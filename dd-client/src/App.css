@@ -88,8 +88,18 @@ main {
 }
 
 .chatentry, .playerentry {
-  width: 100%;
+  width: 94%;
   text-align: left;
+}
+
+.chatinfo {
+  float: right;
+  color: #999;
+  font-size: small;
+}
+
+.playerinfo {
+  float: right;
 }
 
 #chatinput {

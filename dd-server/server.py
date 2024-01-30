@@ -149,12 +149,13 @@ def ready():
     except ValidationError: return { 'err': 'User not found' }, 404
     try:
         room = Room.get(request.json['r_key'])
-        room.users = [u for u in room.users if u.uID != user.uID]
     except ValidationError: return { 'err': 'Room not found' }, 404
 
     user.ready = request.json['ready']
     user.save()
-    room.users.append(user)
+
+    for u in room.users: 
+        if u.pk == user.pk: u.ready = request.json['ready']
     room.save()
 
-    return { 'User ready': user.ready }, 200
+    return { 'ready': user.ready }, 200
