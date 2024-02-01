@@ -24,11 +24,19 @@ export interface LobbyProps {
     user: string;
 }
 
+export interface GameProps {
+    round: number;
+    prevAnswer: string;
+    rKey: string;
+    uKey: string;
+}
+
 export interface RoomInfo {
     rID: number;
     name: string;
     pw: string;
 
+    round: number;
     cap: number;
     host: UserInfo;
 

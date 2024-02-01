@@ -8,6 +8,8 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     const [curMessage, setMessage] = useState(``);
 
     const [curRound, setRound] = useState(0);
+    const [prevAnswer, setPrevAnswer] = useState(``);
+
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
     const [progress, setProgress] = useState<DataState>(DataState.Loading);
@@ -16,7 +18,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     const endChat = useRef<HTMLDivElement>(null);
 
     /* 
-        update lobby info from serveer: 
+        update lobby info from server: 
         personal user info, other users' info, chat info, meta game info (rounds)
     */
     useEffect(() => {
@@ -31,6 +33,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         setUID(dat['uID']);
                         setReady(dat['ready']);
                         setRound(dat['round']);
+                        setPrevAnswer(dat['prev_answer']);
                         setProgress(DataState.Success);
                     }
                 })
@@ -136,7 +139,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                             <li key={i} className="playerentry" style={i%2==0?undefined:altColor}> 
                                 { user.name }
                                 <span className="playerinfo">
-                                { user.uID === uID ?
+                                { (user.uID === uID) && (curRound < 1) ?
                                     <button onClick={signalReady}>{ ready ? 'Cancel' : 'Ready Up' }</button>
                                     : <span>{ user.ready ? 'Ready' : 'Not Ready' }</span>
                                 }</span>
@@ -168,7 +171,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     { curRound === 0 && 'Pregame' }
                     { curRound > 0 && `Round ${curRound}` }
                 </h3></legend>
-                <Game />
+                <Game round={curRound} prevAnswer={prevAnswer} rKey={rKey} uKey={uKey}/>
             </fieldset>
         </main>
     )

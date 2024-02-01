@@ -110,7 +110,12 @@ def lobby(r_key: str, u_key: str):
     for u in users: del u['pk']
     for c in chats: del c['author']['pk']
 
-    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.g_round }, 200
+    if room.g_round < 2: pa = ''
+    else: 
+        index = (int(user.uID) + (room.g_round - 1)) % len(room.users)
+        pa = room.games[index].data[-1]
+
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.g_round, 'prev_answer': pa }, 200
 
 
 @app.route('/lobby/<r_key>/msg', methods=['POST'])
@@ -154,8 +159,45 @@ def ready():
     user.ready = request.json['ready']
     user.save()
 
+    start = True
     for u in room.users: 
         if u.pk == user.pk: u.ready = request.json['ready']
+        if not u.ready: start = False
+    
+    if start: 
+        room.g_round += 1
+        for u in room.users: 
+            u.ready = False
+            room.games.append(Game(**{ 'gID': u.uID, 'data': [] }))
     room.save()
 
     return { 'ready': user.ready }, 200
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    try:
+        user = User.get(request.json['u_key'])
+    except ValidationError: return { 'err': 'User not found' }, 404
+    try:
+        room = Room.get(request.json['r_key'])
+    except ValidationError: return { 'err': 'Room not found' }, 404
+
+    index = (int(user.uID) + (room.g_round - 1)) % len(room.users)
+    
+    room.games[index].data.append(request.json['answer'])
+    for u in room.users:
+        if u.pk == user.pk: u.ready = True
+    room.save()
+
+    advance = True
+    for u in room.users:
+        if u.ready == False: advance = False
+
+    if advance:
+        room.g_round += 1
+        for u in room.users: 
+            u.ready = False
+        room.save()
+
+    return { 'ok': 'Answer submitted' }, 200
