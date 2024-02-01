@@ -23,6 +23,7 @@ class Room(JsonModel):
 
     cap: int = Field(index=True)
     host: User = Field(index=False)
+    exited_users: List[User] = Field(index=False, default=[])
 
     cur_round: int = Field(index=False, default=0)
     max_rounds: int = Field(index=False, default=5)

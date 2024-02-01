@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
+import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState, GameInfo } from "../typedef";
 import Game from "./Game";
+import Settings from "./Settings";
 
 function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
@@ -9,6 +10,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
     const [curRound, setRound] = useState(0);
     const [prevAnswer, setPrevAnswer] = useState(``);
+    const [results, setResults] = useState<GameInfo[]>([]);
 
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
@@ -16,6 +18,8 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     
     const [confirmExit, setExit] = useState(false);
     const endChat = useRef<HTMLDivElement>(null);
+
+    const [showSettings, setShowSettings] = useState(false);
 
     /* 
         update lobby info from server: 
@@ -34,6 +38,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         setReady(dat['ready']);
                         setRound(dat['round']);
                         setPrevAnswer(dat['prev_answer']);
+                        setResults(dat['games']);
                         setProgress(DataState.Success);
                     }
                 })
@@ -125,9 +130,15 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         <button onClick={() => setExit(false)}>Cancel</button>
                     </div>
                 }
+                { showSettings && 
+                   <Settings setShowSettings={setShowSettings} />
+                }
 
                 <fieldset className="lobbyfield" id="roombox"><legend><h3>Room: { name }</h3></legend>
                     <button onClick={() => setExit(true)}>Exit</button>
+                    { Number(uID) === 0 && 
+                        <button onClick={() => setShowSettings(true)}>Settings</button> 
+                    }
                 </fieldset>
                 
                 <fieldset className="lobbyfield" id="playerbox"><legend>Players</legend>
@@ -172,7 +183,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     { curRound > 0 && `Round ${curRound}` }
                     { curRound === -1 && 'Game Over' }
                 </h3></legend>
-                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} rKey={rKey} uKey={uKey}/>
+                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} results={results} rKey={rKey} uKey={uKey}/>
             </fieldset>
         </main>
     )

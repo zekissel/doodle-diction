@@ -12,6 +12,26 @@ CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DEL
 cache = connect()
 
 
+def get_current_time():
+    current_time = datetime.datetime.now()
+    formatted_hour = current_time.strftime('%H')
+    formatted_hour = int(formatted_hour) - 5
+    if formatted_hour < 0: formatted_hour += 24
+    formatted_time = current_time.strftime("%M:%S")
+    formatted_time = str(formatted_hour) + ':' + formatted_time
+    return formatted_time
+
+def server_chat(message: str, room: Room):
+    server = User(**{ 'uID': '-1', 'name': '', 'ready': False })
+    room.chats.append(Chat(**{ 
+            'cID': len(room.chats) + 1, 
+            'stamp': get_current_time(), 
+            'author': server, 
+            'message': message 
+        }))
+    room.save()
+
+
 @app.route('/host', methods=['POST'])
 def host():
 
@@ -28,6 +48,8 @@ def host():
         room = Room(**request.json)
         room.users.append(host)
         room.save()
+
+        server_chat(f'{host.name} is now hosting the lobby.', room)
         return { 'r_key': room.pk, 'u_key': host.pk, 'u_id': host.uID }, 200
     
     except ValidationError: return { 'err': 'Bad request' }, 400
@@ -44,12 +66,15 @@ def leave():
         for c in room.chats: Chat.delete(c.pk)
         for g in room.games: Game.delete(g.pk)
         Room.delete(request.json['r_key'])
-        return { 'msg': 'Room deleted' }, 200
+        return { 'msg': 'Room removed' }, 200
     
     else:
         room.users = [u for u in room.users if u.pk != request.json['u_key']]
+        u = User.get(request.json['u_key'])
+        room.exited_users.append(u)
         room.save()
-        User.delete(request.json['u_key'])
+        server_chat(f'{u.name} has left the room', room)
+
         return { 'msg': 'Exited room' }, 200
 
 
@@ -88,12 +113,16 @@ def join():
         if formpw == '': return { 'auth': 'Enter room password', roompw: formpw }, 401
         else: return { 'err': 'Incorrect password' }, 403
 
-    uID = len(room.users)
-    user = User(**{ 'uID': uID, 'name': request.json['user'], 'ready': False })
+    user = User(**{ 
+        'uID': len(room.users), 
+        'name': request.json['user'], 
+        'ready': False 
+    })
     user.save()
 
     room.users.append(user)
     room.save()
+    server_chat(f'{user.name} has joined the room', room)
 
     return { 'r_key': room.pk, 'u_key': user.pk, 'u_id': user.uID }, 200
 
@@ -118,7 +147,11 @@ def lobby(r_key: str, u_key: str):
         index = (int(user.uID) + (room.cur_round - 1)) % len(room.users)
         pa = room.games[index].data[-1]
 
-    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.cur_round, 'prev_answer': pa }, 200
+    if room.cur_round == -1:
+        games = [g.dict() for g in room.games]
+    else: games = []
+
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.cur_round, 'prev_answer': pa, 'games': games }, 200
 
 
 @app.route('/lobby/<r_key>/msg', methods=['POST'])
@@ -130,17 +163,9 @@ def message(r_key: int):
     if request.json['u_key'] not in [u.pk for u in room.users]:
         return { 'err': 'User not found' }, 404
     
-    # format timestamp
-    current_time = datetime.datetime.now()
-    formatted_hour = current_time.strftime('%H')
-    formatted_hour = int(formatted_hour) - 5
-    if formatted_hour < 0: formatted_hour += 24
-    formatted_time = current_time.strftime("%M:%S")
-    formatted_time = str(formatted_hour) + ':' + formatted_time
-    
     chat = Chat(**{ 
         'cID': len(room.chats) + 1, 
-        'stamp': formatted_time, 
+        'stamp': get_current_time(), 
         'author': User.get(request.json['u_key']), 
         'message': request.json['message'] 
     })
@@ -179,7 +204,7 @@ def ready():
             if room.cur_round == 0: room.games.append(Game(**{ 'gID': u.uID, 'data': [] }))
 
         room.cur_round += 1
-        
+
     room.save()
 
     return { 'ready': user.ready }, 200

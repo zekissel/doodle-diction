@@ -4,7 +4,7 @@ import { API_URL } from "../typedef";
 import Canvas from "./_canvas";
 
 
-function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
+function Game ({ round, prevAnswer, ready, results, rKey, uKey }: GameProps) {
 
     const [myAnswer, setMyAnswer] = useState(``);
 
@@ -57,7 +57,11 @@ function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
 
             { (!ready && round > 0) && <button onClick={submitAnswer}>Submit</button> }
 
-            { round === -1 && <h3>Check the lobby for results.</h3>}
+            { round === -1 && 
+                <div>
+                    results
+                </div>
+            }
         </div>
     )
 }

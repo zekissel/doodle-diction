@@ -66,6 +66,12 @@ main {
   min-height: 24rem;
 }
 
+#roombox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 #playerbox {
   max-height: 8rem;
 }
@@ -104,4 +110,16 @@ main {
 
 #chatinput {
   width: 100%;
+}
+
+#setbut {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+#settingsbox {
+  display: flex;
+  flex-direction: column;
 }

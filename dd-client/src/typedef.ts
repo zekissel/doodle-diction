@@ -24,10 +24,15 @@ export interface LobbyProps {
     user: string;
 }
 
+export interface SettingsProps {
+    setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export interface GameProps {
     round: number;
     prevAnswer: string;
     ready: boolean;
+    results: GameInfo[];
     rKey: string;
     uKey: string;
 }
