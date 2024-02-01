@@ -4,7 +4,7 @@ import { API_URL } from "../typedef";
 import Canvas from "./_canvas";
 
 
-function Game ({ round, prevAnswer, rKey, uKey }: GameProps) {
+function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
 
     const [myAnswer, setMyAnswer] = useState(``);
 
@@ -23,18 +23,21 @@ function Game ({ round, prevAnswer, rKey, uKey }: GameProps) {
             .then(() => setMyAnswer(``))
     }
 
+    const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `10px`, boxShadow: `0 0 10px 5px #000000`}
+
     return (
         <div>
+            { (round > 0 && ready) && <h3>Answer submitted! Wait for others players.</h3> }
             { round === 0 && <h3>Waiting for players to be ready...</h3> }
 
-            { round === 1 && 
+            { (!ready && round === 1) && 
                 <>
                     <h3>Type a creative or interesting sentence: </h3>
                     <input type="text" id="textanswer" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMyAnswer(e.target.value)}/>
                 </>
             }
 
-            { (round > 1 && round % 2 === 0) &&
+            { !ready && (round > 1 && round % 2 === 0) &&
                 <>
 
                     <h3>Draw a picture to illustrate the sentence: </h3>
@@ -43,16 +46,18 @@ function Game ({ round, prevAnswer, rKey, uKey }: GameProps) {
                 </>
             }
 
-            { (round > 1 && round % 2 !== 0) &&
+            { !ready && (round > 1 && round % 2 !== 0) &&
                 <>
 
                     <h3>Type a sentence to caption the picture: </h3>
-                    <img src={prevAnswer} alt="Picture drawn last round by other player"/>
+                    <img src={prevAnswer} alt="Picture drawn last round by other player" style={imgStyle}/>
                     <input type="text" id="textanswer" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMyAnswer(e.target.value)}/>
                 </>
             }
 
-            { round > 0 && <button onClick={submitAnswer}>Submit</button> }
+            { (!ready && round > 0) && <button onClick={submitAnswer}>Submit</button> }
+
+            { round === -1 && <h3>Check the lobby for results.</h3>}
         </div>
     )
 }

@@ -79,6 +79,9 @@ def join():
     if len(room.users) >= capacity:
         return { 'err': 'Room is full' }, 403
     
+    if room.cur_round > 0:
+        return { 'err': 'Game in progress' }, 403
+    
     formpw = request.json['pw']
     roompw = room.pw if room.pw != None else ''
     if formpw != roompw:
@@ -110,12 +113,12 @@ def lobby(r_key: str, u_key: str):
     for u in users: del u['pk']
     for c in chats: del c['author']['pk']
 
-    if room.g_round < 2: pa = ''
+    if room.cur_round < 2: pa = ''
     else: 
-        index = (int(user.uID) + (room.g_round - 1)) % len(room.users)
+        index = (int(user.uID) + (room.cur_round - 1)) % len(room.users)
         pa = room.games[index].data[-1]
 
-    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.g_round, 'prev_answer': pa }, 200
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.cur_round, 'prev_answer': pa }, 200
 
 
 @app.route('/lobby/<r_key>/msg', methods=['POST'])
@@ -161,14 +164,22 @@ def ready():
 
     start = True
     for u in room.users: 
-        if u.pk == user.pk: u.ready = request.json['ready']
+        if u.pk == user.pk: 
+            u.ready = request.json['ready']
+            u.save()
         if not u.ready: start = False
     
     if start: 
-        room.g_round += 1
+        if room.cur_round < 0:
+            for g in room.games: Game.delete(g.pk)
+        
         for u in room.users: 
             u.ready = False
-            room.games.append(Game(**{ 'gID': u.uID, 'data': [] }))
+            u.save()
+            if room.cur_round == 0: room.games.append(Game(**{ 'gID': u.uID, 'data': [] }))
+
+        room.cur_round += 1
+        
     room.save()
 
     return { 'ready': user.ready }, 200
@@ -183,11 +194,13 @@ def submit():
         room = Room.get(request.json['r_key'])
     except ValidationError: return { 'err': 'Room not found' }, 404
 
-    index = (int(user.uID) + (room.g_round - 1)) % len(room.users)
+    index = (int(user.uID) + (room.cur_round - 1)) % len(room.users)
     
     room.games[index].data.append(request.json['answer'])
     for u in room.users:
-        if u.pk == user.pk: u.ready = True
+        if u.pk == user.pk:
+            u.ready = True
+            u.save()
     room.save()
 
     advance = True
@@ -195,9 +208,13 @@ def submit():
         if u.ready == False: advance = False
 
     if advance:
-        room.g_round += 1
         for u in room.users: 
             u.ready = False
-        room.save()
-
+            u.save()
+        if room.cur_round < room.max_rounds:
+            room.cur_round += 1
+        else:
+            room.cur_round = -1
+    
+    room.save()
     return { 'ok': 'Answer submitted' }, 200

@@ -21,9 +21,11 @@ class Room(JsonModel):
     name: str = Field(index=True)
     pw: Optional[str] = Field(index=False, default='')
 
-    g_round: int = Field(index=False, default=0)
     cap: int = Field(index=True)
     host: User = Field(index=False)
+
+    cur_round: int = Field(index=False, default=0)
+    max_rounds: int = Field(index=False, default=5)
 
     users: List[User] = Field(index=False, default=[])
     chats: List[Chat] = Field(index=False, default=[])

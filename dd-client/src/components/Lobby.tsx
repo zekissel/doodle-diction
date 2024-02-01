@@ -170,8 +170,9 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                 <legend><h3>
                     { curRound === 0 && 'Pregame' }
                     { curRound > 0 && `Round ${curRound}` }
+                    { curRound === -1 && 'Game Over' }
                 </h3></legend>
-                <Game round={curRound} prevAnswer={prevAnswer} rKey={rKey} uKey={uKey}/>
+                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} rKey={rKey} uKey={uKey}/>
             </fieldset>
         </main>
     )

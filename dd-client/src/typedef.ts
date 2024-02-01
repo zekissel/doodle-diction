@@ -27,6 +27,7 @@ export interface LobbyProps {
 export interface GameProps {
     round: number;
     prevAnswer: string;
+    ready: boolean;
     rKey: string;
     uKey: string;
 }
