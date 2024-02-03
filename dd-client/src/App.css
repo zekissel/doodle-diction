@@ -123,3 +123,7 @@ main {
   display: flex;
   flex-direction: column;
 }
+
+.resultans {
+  width: 100%;
+}

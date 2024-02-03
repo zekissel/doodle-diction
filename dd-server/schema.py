@@ -16,6 +16,11 @@ class Chat(EmbeddedJsonModel):
     author: User
     message: str
 
+class Settings(EmbeddedJsonModel):
+    max_rounds: int = Field(index=False, default=5)
+    round_timer: int = Field(index=False, default=0)
+    enable_chat: bool = Field(index=False, default=True)
+
 class Room(JsonModel):
     rID: int = Field(index=True)
     name: str = Field(index=True)
@@ -26,7 +31,7 @@ class Room(JsonModel):
     exited_users: List[User] = Field(index=False, default=[])
 
     cur_round: int = Field(index=False, default=0)
-    max_rounds: int = Field(index=False, default=5)
+    settings: Settings = Field(index=False, default=Settings())
 
     users: List[User] = Field(index=False, default=[])
     chats: List[Chat] = Field(index=False, default=[])

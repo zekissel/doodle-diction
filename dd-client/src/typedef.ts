@@ -26,6 +26,8 @@ export interface LobbyProps {
 
 export interface SettingsProps {
     setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
+    rKey: string;
+    uKey: string;
 }
 
 export interface GameProps {
@@ -35,6 +37,10 @@ export interface GameProps {
     results: GameInfo[];
     rKey: string;
     uKey: string;
+}
+
+export interface ResultProps {
+    results: GameInfo;
 }
 
 export interface RoomInfo {

@@ -236,10 +236,41 @@ def submit():
         for u in room.users: 
             u.ready = False
             u.save()
-        if room.cur_round < room.max_rounds:
+        if room.cur_round < room.settings.max_rounds:
             room.cur_round += 1
         else:
             room.cur_round = -1
     
     room.save()
     return { 'ok': 'Answer submitted' }, 200
+
+
+@app.route('/settings/<r_key>/<u_key>', methods=['GET', 'POST'])
+def settings(r_key: str, u_key: str):
+    if request.method == 'GET':
+        try:
+            room = Room.get(r_key)
+            if room.host.pk != u_key:
+                return { 'err': 'Not authorized' }, 403
+        except ValidationError: return { 'err': 'Room not found' }, 404
+
+        cap = room.cap if room.cap > 0 else -1 * room.cap
+        vis = 0 if room.cap > 0 else 1
+
+        return { 'max_players': cap, 'visibility': vis, 'round_timer': room.settings.round_timer, 'max_rounds': room.settings.max_rounds, 'chat': room.settings.enable_chat }, 200
+    
+    #else, POST update to settings
+    try:
+        room = Room.get(r_key)
+        if room.host.pk != u_key:
+            return { 'err': 'Not authorized' }, 403
+    except ValidationError: return { 'err': 'Room not found' }, 404
+
+    public = request.json['visibility'] == 0
+    room.cap = request.json['max_players'] if public else -1 * request.json['max_players']
+    room.settings.round_timer = request.json['round_timer']
+    room.settings.max_rounds = request.json['max_rounds']
+    room.settings.enable_chat = request.json['chat']
+    room.save()
+
+    return { 'ok': 'Settings updated' }, 200
