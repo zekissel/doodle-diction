@@ -138,8 +138,9 @@ def lobby(r_key: str, u_key: str):
     except ValidationError: return { 'err': 'User not found' }, 404
 
     users = [u.dict() for u in room.users]
-    chats = [c.dict() for c in room.chats]
     for u in users: del u['pk']
+
+    chats = [c.dict() for c in room.chats]
     for c in chats: del c['author']['pk']
 
     if room.cur_round < 2: pa = ''
@@ -147,11 +148,7 @@ def lobby(r_key: str, u_key: str):
         index = (int(user.uID) + (room.cur_round - 1)) % len(room.users)
         pa = room.games[index].data[-1]
 
-    if room.cur_round == -1:
-        games = [g.dict() for g in room.games]
-    else: games = []
-
-    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.cur_round, 'prev_answer': pa, 'games': games }, 200
+    return { 'users': users, 'chats': chats, 'uID': user.uID, 'ready': user.ready, 'round': room.cur_round, 'prev_answer': pa, 'chat': room.settings.enable_chat }, 200
 
 
 @app.route('/lobby/<r_key>/msg', methods=['POST'])
@@ -270,7 +267,18 @@ def settings(r_key: str, u_key: str):
     room.cap = request.json['max_players'] if public else -1 * request.json['max_players']
     room.settings.round_timer = request.json['round_timer']
     room.settings.max_rounds = request.json['max_rounds']
-    room.settings.enable_chat = request.json['chat']
+    room.settings.enable_chat = True if request.json['chat'] == 0 else False
     room.save()
 
     return { 'ok': 'Settings updated' }, 200
+
+@app.route('/results/<r_key>', methods=['GET'])
+def results(r_key: str):
+    try:
+        room = Room.get(r_key)
+    except ValidationError: return { 'err': 'Room not found' }, 404
+
+    if room.cur_round != -1:
+        return { 'err': 'Game in progress' }, 403
+    
+    return { 'results': [g.dict() for g in room.games] }, 200

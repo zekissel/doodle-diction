@@ -64,9 +64,9 @@ function Settings ({ setShowSettings, rKey, uKey }: SettingsProps) {
                     </select>
                 </li>
                 <li>Maximum # rounds: 
-                    <button onClick={() => setMaxRounds(maxRounds - 1)} disabled={maxPlayers < 2}>&lt;</button>
+                    <button onClick={() => setMaxRounds(maxRounds - 1)} disabled={maxRounds < 3}>&lt;</button>
                     <span>{maxRounds}</span>
-                    <button onClick={() => setMaxRounds(maxRounds + 1)} disabled={maxPlayers > 9}>&gt;</button>
+                    <button onClick={() => setMaxRounds(maxRounds + 1)} disabled={maxRounds > 10}>&gt;</button>
                 </li>
                 <li>Chat:
                     <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEnableChat(Number(e.target.value))}>

@@ -7,10 +7,10 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
     const [ready, setReady] = useState(false);
     const [curMessage, setMessage] = useState(``);
+    const [enableChat, setEnableChat] = useState(true);
 
     const [curRound, setRound] = useState(0);
     const [prevAnswer, setPrevAnswer] = useState(``);
-    const [results, setResults] = useState<GameInfo[]>([]);
 
     const [users, setUsers] = useState<UserInfo[]>([]);
     const [chats, setChats] = useState<ChatInfo[]>([]);
@@ -38,7 +38,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         setReady(dat['ready']);
                         setRound(dat['round']);
                         setPrevAnswer(dat['prev_answer']);
-                        setResults(dat['games']);
+                        setEnableChat(dat['chat']);
                         setProgress(DataState.Success);
                     }
                 })
@@ -171,8 +171,8 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                         <div ref={endChat}></div>
                     </ul>
                     <div id="chatinput">
-                        <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} />
-                        <button onClick={sendMessage}>Send</button>
+                        <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} disabled={!enableChat}/>
+                        <button onClick={sendMessage} disabled={!enableChat}>Send</button>
                     </div>
                 </fieldset>
             </div>
@@ -183,7 +183,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     { curRound > 0 && `Round ${curRound}` }
                     { curRound === -1 && 'Game Over' }
                 </h3></legend>
-                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} results={results} rKey={rKey} uKey={uKey}/>
+                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} rKey={rKey} uKey={uKey}/>
             </fieldset>
         </main>
     )

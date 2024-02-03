@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { GameProps, ResultProps } from "../typedef";
-import { API_URL } from "../typedef";
+import React, { useEffect, useState } from "react";
+import { GameProps, PostProps, ResultProps } from "../typedef";
+import { API_URL, GameInfo } from "../typedef";
 import Canvas from "./_canvas";
 
 const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `10px`, boxShadow: `0 0 10px 5px #000000`}
@@ -19,7 +19,26 @@ function Paper({ results }: ResultProps) {
     )
 }
 
-function Game ({ round, prevAnswer, ready, results, rKey, uKey }: GameProps) {
+function Postgame ({ rKey }: PostProps) {
+
+    const [results, setResults] = useState<GameInfo[]>([]);
+
+    useEffect(() => {
+        fetch(`${API_URL}/results/${rKey}`)
+            .then(res => res.json())
+            .then(dat => {
+                setResults(dat['results'])
+            })
+    }, []);
+
+
+    return (
+        results.map((game, i) => <Paper key={i} results={game} />)
+    )
+}
+
+
+function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
 
     const [myAnswer, setMyAnswer] = useState(``);
 
@@ -72,7 +91,7 @@ function Game ({ round, prevAnswer, ready, results, rKey, uKey }: GameProps) {
             { (!ready && round > 0) && <button onClick={submitAnswer}>Submit</button> }
 
             { round === -1 && 
-                results.map((game, i) => <Paper key={i} results={game}/>)
+                <Postgame rKey={rKey}/>
             }
         </div>
     )

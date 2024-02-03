@@ -34,13 +34,22 @@ export interface GameProps {
     round: number;
     prevAnswer: string;
     ready: boolean;
-    results: GameInfo[];
     rKey: string;
     uKey: string;
 }
 
+export interface PostProps {
+    rKey: string;
+}
+
 export interface ResultProps {
     results: GameInfo;
+}
+
+export interface SettingsInfo {
+    max_rounds: number;
+    round_timer: number;
+    enable_chat: boolean;
 }
 
 export interface RoomInfo {
@@ -49,6 +58,7 @@ export interface RoomInfo {
     pw: string;
 
     round: number;
+    settings: SettingsInfo;
     cap: number;
     host: UserInfo;
 
