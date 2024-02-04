@@ -7,7 +7,7 @@ function Settings ({ setShowSettings, rKey, uKey }: SettingsProps) {
     const [visibility, setVisibility] = useState(0);
     const [roundTimer, setRoundTimer] = useState(0);
     const [maxRounds, setMaxRounds] = useState(5);
-    const [enableChat, setEnableChat] = useState(0);
+    const [enableChat, setEnableChat] = useState(true);
     // add password variable
 
     useEffect(() => {
@@ -69,9 +69,9 @@ function Settings ({ setShowSettings, rKey, uKey }: SettingsProps) {
                     <button onClick={() => setMaxRounds(maxRounds + 1)} disabled={maxRounds > 10}>&gt;</button>
                 </li>
                 <li>Chat:
-                    <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEnableChat(Number(e.target.value))}>
-                        <option value="0" selected={enableChat === 0}>Enabled</option>
-                        <option value="1" selected={enableChat === 0}>Disabled</option>
+                    <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEnableChat(e.target.value === 'true')}>
+                        <option value="true" selected={enableChat}>Enabled</option>
+                        <option value="false" selected={!enableChat}>Disabled</option>
                     </select>
                 </li>
             </ul>

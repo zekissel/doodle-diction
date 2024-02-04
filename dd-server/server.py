@@ -3,7 +3,7 @@ import datetime
 from pydantic import ValidationError
 from flask import Flask, request
 from flask_cors import CORS
-from schema import User, Chat, Game, Room, index_models, connect
+from schema import User, Chat, Game, Settings, Room, index_models, connect
 
 
 app = Flask(__name__)
@@ -65,6 +65,7 @@ def leave():
         for u in room.users: User.delete(u.pk)
         for c in room.chats: Chat.delete(c.pk)
         for g in room.games: Game.delete(g.pk)
+        Settings.delete(room.settings.pk)
         Room.delete(request.json['r_key'])
         return { 'msg': 'Room removed' }, 200
     
@@ -194,6 +195,8 @@ def ready():
     if start: 
         if room.cur_round < 0:
             for g in room.games: Game.delete(g.pk)
+            room.games = []
+            room.save()
         
         for u in room.users: 
             u.ready = False
@@ -267,7 +270,8 @@ def settings(r_key: str, u_key: str):
     room.cap = request.json['max_players'] if public else -1 * request.json['max_players']
     room.settings.round_timer = request.json['round_timer']
     room.settings.max_rounds = request.json['max_rounds']
-    room.settings.enable_chat = True if request.json['chat'] == 0 else False
+    room.settings.enable_chat = request.json['chat'] == True
+    room.settings.save()
     room.save()
 
     return { 'ok': 'Settings updated' }, 200

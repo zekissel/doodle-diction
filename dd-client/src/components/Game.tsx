@@ -3,7 +3,7 @@ import { GameProps, PostProps, ResultProps } from "../typedef";
 import { API_URL, GameInfo } from "../typedef";
 import Canvas from "./_canvas";
 
-const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `10px`, boxShadow: `0 0 10px 5px #000000`}
+const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `8px`, boxShadow: `0 0 5px 3px #000000`}
 
 function Paper({ results }: ResultProps) {
 
@@ -11,7 +11,6 @@ function Paper({ results }: ResultProps) {
         <ul className="resultpaper">
             { results.data.map((answer, i) => 
                 <li key={i} className="resultans">
-                    <h4>Round {i + 1}:</h4>
                     { i % 2 === 0 ? <p>{ answer }</p> : <img src={answer} alt="Drawing" style={imgStyle}/> }
                 </li>
             )}
@@ -38,11 +37,13 @@ function Postgame ({ rKey }: PostProps) {
 }
 
 
-function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
+function Game ({ round, prevAnswer, ready, setReady, rKey, uKey }: GameProps) {
 
     const [myAnswer, setMyAnswer] = useState(``);
 
     const submitAnswer = async () => {
+        if (myAnswer === ``) return;
+
         fetch(`${API_URL}/submit`, {
             method: "POST",
             headers: {
@@ -54,7 +55,10 @@ function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
                 'answer': myAnswer,
             })
         })
-            .then(() => setMyAnswer(``))
+            .then(() => {
+                setMyAnswer(``);
+                setReady(true);
+            })
     }
 
 
@@ -75,7 +79,7 @@ function Game ({ round, prevAnswer, ready, rKey, uKey }: GameProps) {
 
                     <h3>Draw a picture to illustrate the sentence: </h3>
                     <h2>{ prevAnswer }</h2>
-                    <Canvas height={300} width={400} updateImage={setMyAnswer} />
+                    <Canvas height={270} width={360} updateImage={setMyAnswer} />
                 </>
             }
 

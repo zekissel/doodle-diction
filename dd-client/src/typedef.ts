@@ -34,6 +34,7 @@ export interface GameProps {
     round: number;
     prevAnswer: string;
     ready: boolean;
+    setReady: React.Dispatch<React.SetStateAction<boolean>>;
     rKey: string;
     uKey: string;
 }

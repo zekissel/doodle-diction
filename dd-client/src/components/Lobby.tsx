@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState, GameInfo } from "../typedef";
+import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
 import Game from "./Game";
 import Settings from "./Settings";
 
@@ -17,7 +17,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     const [progress, setProgress] = useState<DataState>(DataState.Loading);
     
     const [confirmExit, setExit] = useState(false);
-    const endChat = useRef<HTMLDivElement>(null);
+    const endChat = useRef<HTMLLIElement>(null);
 
     const [showSettings, setShowSettings] = useState(false);
 
@@ -117,7 +117,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
     const altColor = { backgroundColor: `#1c1c1c`};
     useEffect(() => {
-        endChat.current?.scrollIntoView({ behavior: `smooth` });
+        endChat.current?.scrollIntoView({ behavior: `smooth`, block: `nearest`});
     }, [chats]);
 
     return (
@@ -168,7 +168,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                             chats.map((chat, i) => <li key={i} className="chatentry" style={i%2==0?undefined:altColor}>{ chat.message } <span className="chatinfo"> { chat.author.uID === uID ? 'You' : chat.author.name }@{ chat.stamp.toString() }</span></li>)
                             
                         }
-                        <div ref={endChat}></div>
+                        <li ref={endChat}></li>
                     </ul>
                     <div id="chatinput">
                         <input type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} value={curMessage} onKeyDown={enterToSend} disabled={!enableChat}/>
@@ -183,7 +183,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     { curRound > 0 && `Round ${curRound}` }
                     { curRound === -1 && 'Game Over' }
                 </h3></legend>
-                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} rKey={rKey} uKey={uKey}/>
+                <Game round={curRound} prevAnswer={prevAnswer} ready={ready} setReady={setReady} rKey={rKey} uKey={uKey}/>
             </fieldset>
         </main>
     )
