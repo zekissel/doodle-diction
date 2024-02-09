@@ -25,6 +25,7 @@ export interface LobbyProps {
 }
 
 export interface SettingsProps {
+    round: number;
     setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
     rKey: string;
     uKey: string;

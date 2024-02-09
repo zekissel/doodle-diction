@@ -8,6 +8,7 @@ from schema import Room, User
 def test_new_user():
         
     user = User(uID=0, name='User_Name', ready=False)
+    user.save()
     assert user.uID == 0
     assert user.name == 'User_Name'
     assert user.ready == False

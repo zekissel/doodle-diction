@@ -36,9 +36,9 @@ function App() {
 
   return (
       <>
-        <h1 onClick={menu !== MenuState.Game ? goBack : undefined}>Doodle Diction</h1>
         { menu === MenuState.Main &&
           <menu>
+            <h1>Doodle Diction</h1>
             <li onClick={setJoinIfNameSet}>Play</li>
             <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
             <li>

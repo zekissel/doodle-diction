@@ -131,7 +131,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     </div>
                 }
                 { showSettings && 
-                   <Settings setShowSettings={setShowSettings} rKey={rKey} uKey={uKey} />
+                   <Settings round={curRound} setShowSettings={setShowSettings} rKey={rKey} uKey={uKey} />
                 }
 
                 <fieldset className="lobbyfield" id="roombox"><legend><h3>Room: { name }</h3></legend>

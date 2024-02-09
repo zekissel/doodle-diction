@@ -101,34 +101,39 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             <li onClick={setMain}>Back to Menu</li>
 
             <div className="menurow">
-            <fieldset className="hostbox">
-                <legend>Host</legend>
-                <li>
-                    <input type='text' name='rID' placeholder='Room name' onChange={e => setHostName(e.target.value)} defaultValue={hostName}/>
-                    <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
-                </li>
+                <fieldset className="hostbox">
+                    <legend><strong>Host</strong></legend>
+                    <li>
+                        <input type='text' name='rID' placeholder='Room name' onChange={e => setHostName(e.target.value)} defaultValue={hostName}/>
+                    </li>
+                    <li>
+                        <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
+                    </li>
 
-                { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setHostPass(e.target.value)}/></li> }
-                <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/><label>Max players: { capacity }</label></li>
-    
-                <li><button onClick={hostGame}>Create</button></li>
+                    { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setHostPass(e.target.value)}/></li> }
 
-                { hostError !== `` && <li>{ hostError }</li> }
-            </fieldset>
+                    <li><label>Max players: { capacity }</label></li>
+                    <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/></li>
+                    
+        
+                    <li><button onClick={hostGame}>Create</button></li>
 
-            <fieldset className="joinbox">
-                <legend>Join</legend>
-                <li>
-                    { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
-                    { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
-                </li>
-                <li><button onClick={joinGame}>Connect</button></li>
-                { joinError !== `` && <li>{ joinError }</li> }
-            </fieldset>
+                    { hostError !== `` && <li>{ hostError }</li> }
+                </fieldset>
+
+                <fieldset className="joinbox">
+                    <legend><strong>Join</strong></legend>
+                    <li>
+                        { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
+                        { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
+                    </li>
+                    <li><button onClick={joinGame}>Connect</button></li>
+                    { joinError !== `` && <li>{ joinError }</li> }
+                </fieldset>
             </div>
 
             <fieldset className="pubbox">
-                <legend>Public Games</legend>
+                <legend><strong>Public Games</strong></legend>
                     <ul>
                         { progress === DataState.Loading && <li>Loading public games</li> }
                         { progress === DataState.Error && <li>Could not load public games</li> }

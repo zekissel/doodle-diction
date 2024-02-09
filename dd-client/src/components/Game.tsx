@@ -3,7 +3,7 @@ import { GameProps, PostProps, ResultProps } from "../typedef";
 import { API_URL, GameInfo } from "../typedef";
 import Canvas from "./_canvas";
 
-const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `8px`, boxShadow: `0 0 5px 3px #000000`}
+const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `8px`, boxShadow: `0 0 5px 2px #000000` }
 
 function Paper({ results }: ResultProps) {
 
@@ -69,7 +69,7 @@ function Game ({ round, prevAnswer, ready, setReady, rKey, uKey }: GameProps) {
 
             { (!ready && round === 1) && 
                 <>
-                    <h3>Type a creative or interesting sentence: </h3>
+                    <h3>Type an interesting or creative sentence: </h3>
                     <input type="text" id="textanswer" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMyAnswer(e.target.value)}/>
                 </>
             }

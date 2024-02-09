@@ -11,7 +11,7 @@ services:
       - dbase
     build: dd-server/
     ports:
-      - "8000:5000"
+      - "8000:8000"
     volumes:
       - ./dd-server:/doodle/backend
     environment:

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SettingsProps, API_URL } from "../typedef";
 
-function Settings ({ setShowSettings, rKey, uKey }: SettingsProps) {
+function Settings ({ round, setShowSettings, rKey, uKey }: SettingsProps) {
 
     const [maxPlayers, setMaxPlayers] = useState(6);
     const [visibility, setVisibility] = useState(0);
@@ -64,7 +64,7 @@ function Settings ({ setShowSettings, rKey, uKey }: SettingsProps) {
                     </select>
                 </li>
                 <li>Maximum # rounds: 
-                    <button onClick={() => setMaxRounds(maxRounds - 1)} disabled={maxRounds < 3}>&lt;</button>
+                    <button onClick={() => setMaxRounds(maxRounds - 1)} disabled={maxRounds < 3 || maxRounds == round}>&lt;</button>
                     <span>{maxRounds}</span>
                     <button onClick={() => setMaxRounds(maxRounds + 1)} disabled={maxRounds > 10}>&gt;</button>
                 </li>

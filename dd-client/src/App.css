@@ -38,7 +38,8 @@ fieldset {
 }
 
 .joinbox, .hostbox, .pubbox {
-  height: 8rem;
+  height: 10rem;
+  width: 20rem;
 }
 
 main {
@@ -47,6 +48,7 @@ main {
   justify-content: center;
   align-items: center;
 }
+
 
 .lobbypanel {
   display: flex;
@@ -62,8 +64,8 @@ main {
 }
 
 .gamefield {
-  width: 36rem;
-  min-height: 24rem;
+  min-width: 22rem;
+  min-height: 30rem;
 }
 
 #roombox {
@@ -128,4 +130,35 @@ main {
 
 .resultans {
   width: 100%;
+}
+
+
+@media screen and (max-width: 768px) {
+  main {
+    flex-direction: column;
+  }
+  
+  .joinbox, .hostbox, .pubbox {
+    width: 100%;
+  }
+
+  .joinbox {
+    height: 5rem;
+  }
+
+  .menurow {
+    flex-direction: column;
+  }
+
+  .lobbypanel {
+    width: 100%;
+  }
+
+  .lobbyfield, .gamefield {
+    width: 105%;
+  }
+
+  .gamefield {
+    width: 40%;
+  }
 }
