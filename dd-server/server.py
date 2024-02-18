@@ -1,15 +1,24 @@
 import datetime
 
 from pydantic import ValidationError
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from schema import User, Chat, Game, Settings, Room, index_models, connect
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='dist')
 index_models()
-CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 cache = connect()
+
+
+@app.route('/')
+def home():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/assets/<path:filename>')
+def send_assets(filename):
+    return send_from_directory(app.static_folder+'/assets', filename)
 
 
 def get_current_time():

@@ -41,5 +41,5 @@ def index_models():
     Migrator().run()
 
 def connect():
-    cache = get_redis_connection(host='dbase', port=6378)
+    cache = get_redis_connection(host='redis-service.default.svc.cluster.local', port=6378)
     return cache

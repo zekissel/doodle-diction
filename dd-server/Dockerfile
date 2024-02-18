@@ -2,10 +2,9 @@
 FROM python:3.10-alpine
 WORKDIR /doodle/backend/
 
-RUN apk add --no-cache gcc musl-dev linux-headers
+RUN apk add --no-cache gcc musl-dev linux-headers redis
 COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
