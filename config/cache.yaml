@@ -35,6 +35,7 @@ data:
     dbfilename dump.rdb
     dir /data
     appendonly yes
+    replica-read-only no
     save ""
   slave.conf: |
     slaveof redis-stack-0.redis-service.redis 6379
