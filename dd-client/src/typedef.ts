@@ -1,4 +1,5 @@
-export const API_URL = `http://localhost:80`;
+export const LOCAL_API_URL = `http://localhost:8000`;
+export const API_URL = `https://doodlediction.com`;
 
 export enum DataState { Loading, Success, Error }
 export enum MenuState { Main, Join, Learn, Game }

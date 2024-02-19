@@ -1,7 +1,7 @@
 import datetime
 
 from pydantic import ValidationError
-from flask import Flask, request, send_from_directory, g
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from schema import User, Chat, Game, Settings, Room, index_models, connect
 
@@ -9,7 +9,7 @@ from schema import User, Chat, Game, Settings, Room, index_models, connect
 app = Flask(__name__, static_folder='dist')
 CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 index_models()
-g.cache = connect()
+cache = connect()
 
 #@app.cli.command('initdb')
 #def initdb():
@@ -56,7 +56,7 @@ def host():
         host.save()
 
         request.json['host'] = host
-        request.json['rID'] = g.cache.incr('count')
+        request.json['rID'] = cache.incr('count')
         
         room = Room(**request.json)
         room.users.append(host)

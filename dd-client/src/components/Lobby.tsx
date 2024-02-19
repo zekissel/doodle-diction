@@ -45,6 +45,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                 .catch(err => {
                     console.error(err)
                     setProgress(DataState.Error);
+                    setJoin();
                 })
         }, 2000);
 
