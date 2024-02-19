@@ -44,6 +44,7 @@ data:
     timeout 300
     dir /data
     appendonly yes
+    replica-read-only no
     save ""
 
 ---
