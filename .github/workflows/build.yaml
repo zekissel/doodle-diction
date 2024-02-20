@@ -56,7 +56,7 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ github.token }}
           run: |
-            mkdir -p ./dd-server/dist
+            mkdir -p ./dd-server/dist/assets
             mv ./dd-server/index.html ./dd-server/dist/
             mv ./dd-server/assets/*.css ./dd-server/dist/assets/main.css
             mv ./dd-server/assets/*.js ./dd-server/dist/assets/main.js

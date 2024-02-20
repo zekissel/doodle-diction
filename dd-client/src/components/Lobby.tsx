@@ -137,7 +137,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                 }])
             })
             .then(() => setMessage(``))
-            .catch(err => console.error(err))
+            .catch(err => { if (DEV) console.error(err) })
     }
 
     const altColor = { backgroundColor: `#1c1c1c`};
