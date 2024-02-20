@@ -1,0 +1,31 @@
+name: Build Production Client
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v1
+          with:
+            node-version: '21.x'
+
+        - name: Install dependencies
+          run: npm install
+
+        - name: Build
+          run: npm run build
+
+        - name: Send build to server
+          run: |
+            git fetch origin prod:prod
+            git checkout prod
+            git add -f dist
+            git commit -m "automatic compilation of client html/assets"

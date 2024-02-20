@@ -6,12 +6,6 @@ from flask_cors import CORS
 from schema import User, Chat, Game, Settings, Room, index_models, connect
 
 
-app = Flask(__name__)
-CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DELETE'])
-index_models()
-cache = connect()
-
-
 def get_current_time():
     current_time = datetime.datetime.now()
     formatted_hour = current_time.strftime('%H')
@@ -31,6 +25,11 @@ def server_chat(message: str, room: Room):
         }))
     room.save()
 
+
+app = Flask(__name__)
+CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+index_models()
+cache = connect()
 
 @app.route('/host', methods=['POST'])
 def host():
