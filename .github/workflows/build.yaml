@@ -27,6 +27,7 @@ jobs:
 
         - name: Checkout production
           run: |
+            git fetch
             git checkout -f prod
             git checkout main -- dd-client/dist
             git add -A
