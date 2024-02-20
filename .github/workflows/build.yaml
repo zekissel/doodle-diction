@@ -47,7 +47,7 @@ jobs:
           uses: actions/download-artifact@v2
           with:
             name: dist
-            path: ./dd-server/dist
+            path: ./dd-server
 
         - name: Commit build to production branch
           working-directory: ./
