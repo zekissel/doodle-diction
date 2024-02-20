@@ -28,8 +28,10 @@ jobs:
             git config --global user.name 'GitHub Action'
             git config --global user.email 'action@github.com'
             git stash -u -- ./dist/
-            git fetch
+            cd ..
+            git fetch origin prod:prod --force
             git checkout -f prod
+            cd ./dd-server
             git stash pop
             git add ./dist/
             git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
