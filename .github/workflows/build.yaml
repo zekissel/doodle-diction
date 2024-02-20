@@ -34,24 +34,34 @@ jobs:
             npm ci
             npm run build
 
-        - name: Upload distribution aritfacts
+        - name: Upload distribution aritfacts (client)
           uses: actions/upload-artifact@v2
           with:
-            name: dist
+            name: client-dist
             path: ./dd-client/dist
+        - name: Upload distribution aritfacts (server)
+          uses: actions/upload-artifact@v2
+          with:
+            name: server-dist
+            path: ./dd-server/*.py
 
         - name: Checkout prod branch
           uses: actions/checkout@v2
           with:
             ref: prod
 
-        - name: Download distribution artifacts
+        - name: Download distribution artifacts (client)
           uses: actions/download-artifact@v2
           with:
-            name: dist
+            name: client-dist
+            path: ./dd-server
+        - name: Download distribution artifacts (server)
+          uses: actions/download-artifact@v2
+          with:
+            name: server-dist
             path: ./dd-server
 
-        - name: Commit client build to production branch
+        - name: Commit client and server builds to production branch
           working-directory: ./
           env:
             GITHUB_TOKEN: ${{ github.token }}
@@ -64,8 +74,14 @@ jobs:
             export INTEGRITY=$(cat ./dd-server/dist/assets/main.js | openssl dgst -sha384 -binary | openssl enc -base64 -A)
             sed -i "s@/assets/index.*js\"@/assets/main.js\" integrity=\"sha384-$INTEGRITY\"@" ./dd-server/dist/index.html
 
+            sed -i 's@dbase@0.0.0.0@' ./dd-server/schema.py
+            sed -i "s@__name__@__name__, static_folder='dist'@" ./dd-server/server.py
+            sed -i 's@http://localhost:8080@*@' ./dd-server/server.py
+            echo "\n\n@app.route('/')\ndef home():\n\treturn send_from_directory(app.static_folder, 'index.html')\n\n@app.route('/assets/<path:filename>')\ndef send_assets(filename):\n\treturn send_from_directory(app.static_folder+'/assets', filename)" >> ./dd-server/server.py
+
             git config --global user.email "dd-github-action"
             git config --global user.name "github-actions@github.com"
             git add ./dd-server/dist/*
-            git diff-index --quiet HEAD || git commit -am "Auto compile production client"
+            git add ./dd-server/*.py
+            git diff-index --quiet HEAD || git commit -am "Auto compile client and configure server"
             git push origin prod
