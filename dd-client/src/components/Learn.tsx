@@ -6,7 +6,7 @@ function Learn ({ setMain }: MenuProps) {
     return (
 
         <menu>
-            <li onClick={setMain}>return to menu</li>
+            <li><button onClick={setMain}>return to menu</button></li>
             <li>get gud</li>
             
         </menu>

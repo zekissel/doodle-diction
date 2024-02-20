@@ -59,8 +59,8 @@ function App() {
         { menu === MenuState.Main &&
           <menu>
             <h1>Doodle Diction</h1>
-            <li onClick={setJoinIfNameSet}>Play</li>
-            <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
+            <li><button onClick={setJoinIfNameSet}>Play</button></li>
+            <li><button onClick={() => setMenu(MenuState.Learn)}>How to Play</button></li>
             <li>
               <input type='text' placeholder='Nickname' onChange={saveUser} defaultValue={user} onKeyDown={enterToJoin} />
             </li>

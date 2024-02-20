@@ -1,4 +1,3 @@
-//export const API_URL = `http://localhost:8000`;
 export const DEV: boolean = process.env.NODE_ENV !== 'production';
 export const API_URL = DEV ? `http://localhost:8000` : `https://doodlediction.com`;
 

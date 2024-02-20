@@ -99,7 +99,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
     return (
 
         <menu>
-            <li onClick={setMain}>Back to Menu</li>
+            <li><button onClick={setMain}>Back to Menu</button></li>
 
             <div className="menurow">
                 <fieldset className="hostbox">
