@@ -23,13 +23,15 @@ jobs:
 
         - name: Build
           working-directory: ./dd-client
-          run: npm run build
+          run: |
+            npm run build
+            git stash -a push ./dist
 
         - name: Checkout production
           run: |
             git fetch
             git checkout -f prod
-            git checkout main -- dd-client/dist/index.html dd-client/dist/assets/*
+            git stash pop
             git add -A
             git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
             git push origin prod
