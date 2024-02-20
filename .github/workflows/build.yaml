@@ -45,6 +45,7 @@ jobs:
 
         - name: Create dist directory
           run: |
+            rm -r ./dd-server/dist
             mkdir -p ./dd-server/dist
 
         - name: Download distribution directory
