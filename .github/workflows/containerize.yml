@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: dd-server
+  REGISTRY: docker.io
+  IMAGE_NAME: zekissel/dd-server
 
 jobs:
   build:
