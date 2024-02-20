@@ -25,7 +25,7 @@ jobs:
           working-directory: ./dd-client
           run: |
             npm run build
-            git stash -u ./dist
+            git stash -u -- ./dist
 
         - name: Checkout production
           run: |
