@@ -32,6 +32,23 @@ jobs:
             npm ci
             npm run build
 
+        - name: Upload distribution aritfacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: dist
+            path: ./dd-client/dist
+
+        - name: Checkout prod branch
+          uses: actions/checkout@v2
+          with:
+            ref: prod
+
+        - name: Download distribution directory
+          uses: actions/download-artifact@v2
+          with:
+            name: dist
+            path: ./dd-server/dist
+
         - name: Commit build to production branch
           working-directory: ./
           env:
@@ -39,9 +56,6 @@ jobs:
           run: |
             git config --global user.email "github-actions"
             git config --global user.name "github-actions@github.com"
-            git fetch
-            git checkout prod
-            cp -r dist/* .
-            git add .
+            git add ./dd-server/dist
             git commit -m "Auto build production client"
             git push
