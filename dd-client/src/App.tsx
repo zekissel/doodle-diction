@@ -5,26 +5,6 @@ import Join from './components/Join';
 import Learn from './components/Learn';
 import Lobby from './components/Lobby';
 
-window.addEventListener('touchmove', ev => {
-  if (
-    (ev.target as HTMLElement)!.nodeName !== 'CANVAS'
-  ) {
-    ev.preventDefault();
-    ev.stopImmediatePropagation();
-  };
-}, { passive: false });
-
-window.addEventListener('touchstart', ev => {
-  if (
-    (ev.target as HTMLElement)!.nodeName !== 'CANVAS' &&
-    (ev.target as HTMLElement)!.nodeName !== 'INPUT' &&
-    (ev.target as HTMLElement)!.nodeName !== 'BUTTON'
-  ) {
-    ev.preventDefault();
-    ev.stopImmediatePropagation();
-  };
-}, { passive: false });
-
 function App() {
 
   const [menu, setMenu] = useState<MenuState>(MenuState.Main);
@@ -59,8 +39,8 @@ function App() {
         { menu === MenuState.Main &&
           <menu>
             <h1>Doodle Diction</h1>
-            <li><button onClick={setJoinIfNameSet}>Play</button></li>
-            <li><button onClick={() => setMenu(MenuState.Learn)}>How to Play</button></li>
+            <li onClick={setJoinIfNameSet}>Play</li>
+            <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
             <li>
               <input type='text' placeholder='Nickname' onChange={saveUser} defaultValue={user} onKeyDown={enterToJoin} />
             </li>

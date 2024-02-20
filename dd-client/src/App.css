@@ -132,6 +132,9 @@ main {
   width: 100%;
 }
 
+.canvaswrap {
+  touch-action: none;
+}
 
 @media screen and (max-width: 768px) {
   main {
