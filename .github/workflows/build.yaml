@@ -29,7 +29,7 @@ jobs:
           run: |
             git fetch
             git checkout -f prod
-            git checkout main -- dd-client/dist
+            git checkout main -- dd-client/dist/index.html dd-client/dist/assets/*
             git add -A
             git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
             git push origin prod
