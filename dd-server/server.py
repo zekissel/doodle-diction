@@ -100,6 +100,10 @@ def join():
             del r['pk']
             del r['pw']
             del r['host']
+            del r['chats']
+            del r['exited_users']
+            del r['games']
+            del r['settings']['pk']
             for u in r['users']:
                 del u['pk']
         return { 'rooms': resp }, 200
