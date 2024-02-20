@@ -27,7 +27,7 @@ jobs:
 
         - name: Checkout production
           run: |
-            git checkout -f origin prod:prod
+            git checkout -f prod
             git checkout main -- dd-client/dist
             git add -A
             git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
