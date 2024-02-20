@@ -1,7 +1,7 @@
 import datetime
 
 from pydantic import ValidationError
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from schema import User, Chat, Game, Settings, Room, index_models, connect
 
@@ -21,15 +21,16 @@ def server_chat(message: str, room: Room):
             'cID': len(room.chats) + 1, 
             'stamp': get_current_time(), 
             'author': server, 
-            'message': message 
+            'message': message
         }))
     room.save()
 
 
-app = Flask(__name__)
-CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 index_models()
 cache = connect()
+app = Flask(__name__)
+CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+
 
 @app.route('/host', methods=['POST'])
 def host():

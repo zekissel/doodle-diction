@@ -32,8 +32,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                     setRooms(dat['rooms']);
                     setProgress(DataState.Success);
                 })
-                .catch(err => {
-                    console.error(err)
+                .catch(() => {
                     setProgress(DataState.Error);
                 })
         }, 3000);
@@ -48,8 +47,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 setRooms(dat['rooms']);
                 setProgress(DataState.Success);
             })
-            .catch(err => {
-                console.error(err)
+            .catch(() => {
                 setProgress(DataState.Error);
             })
     }, []);
