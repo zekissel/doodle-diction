@@ -40,6 +40,20 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        setProgress(DataState.Loading);
+        fetch(`${API_URL}/join`)
+            .then(res => res.json())
+            .then(dat => {
+                setRooms(dat['rooms']);
+                setProgress(DataState.Success);
+            })
+            .catch(err => {
+                console.error(err)
+                setProgress(DataState.Error);
+            })
+    }, []);
+
     const hostGame = async () => {
         voidError();
         if (hostName === ``) return

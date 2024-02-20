@@ -2,6 +2,8 @@ name: Build Production Client
 
 on:
     push:
+        paths-ignore:
+            - '.github/**'
         branches:
         - main
 
@@ -56,7 +58,6 @@ jobs:
           run: |
             mv ./dd-server/index.html ./dd-server/dist/
             mv ./dd-server/assets/* ./dd-server/dist/assets/
-            ls -A ./dd-server/dist
             git config --global user.email "github-actions"
             git config --global user.name "github-actions@github.com"
             git add ./dd-server/dist/*
