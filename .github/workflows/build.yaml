@@ -18,14 +18,19 @@ jobs:
             node-version: '21.x'
 
         - name: Install dependencies
-          run: cd dd-client && npm install
+          run: |
+            cd dd-client
+            npm install
 
         - name: Build
-          run: npm run build
+          run: |
+            npm run build
+            cd ..
 
         - name: Send build to server
           run: |
             git fetch origin prod:prod
             git checkout prod
+            cd dd-server
             git add -f dist
             git commit -m "automatic compilation of client html/assets"
