@@ -25,6 +25,8 @@ jobs:
           working-directory: ./dd-client
           run: |
             npm run build
+            git config --global user.name 'GitHub Action'
+            git config --global user.email 'action@github.com'
             git stash -u -- ./dist/
             git fetch
             git checkout -f prod
