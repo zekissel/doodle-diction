@@ -27,11 +27,9 @@ jobs:
 
         - name: Checkout production
           run: |
-            git fetch origin prod:prod
+            git fetch
             git checkout prod
-
-        - name: Copy files
-          working-directory: ./dd-server
-          run: |
-            git add -f dist
-            git commit -m "automatic compilation of client html/assets"
+            git checkout main -- dd-client/dist
+            git add -A
+            git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
+            git push origin prod
