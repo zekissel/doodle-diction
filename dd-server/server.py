@@ -21,7 +21,7 @@ def server_chat(message: str, room: Room):
             'cID': len(room.chats) + 1, 
             'stamp': get_current_time(), 
             'author': server, 
-            'message': message 
+            'message': message
         }))
     room.save()
 
