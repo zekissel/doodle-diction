@@ -23,6 +23,8 @@ jobs:
 
         - name: Build and commit to production branch
           working-directory: ./dd-client
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
           run: |
             npm run build
             git config --global user.name 'GitHub Action'
