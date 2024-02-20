@@ -43,16 +43,11 @@ jobs:
           with:
             ref: prod
 
-        - name: Create dist directory
-          run: |
-            rm -r ./dd-server/dist
-            mkdir -p ./dd-server/dist
-
         - name: Download distribution directory
           uses: actions/download-artifact@v2
           with:
             name: dist
-            path: ./dd-server/dist
+            path: ./dd-server
 
         - name: Commit build to production branch
           working-directory: ./
