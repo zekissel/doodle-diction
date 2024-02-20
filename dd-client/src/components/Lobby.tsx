@@ -105,7 +105,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
             })
         })
             .then(() => setReady(!ready))
-            .catch(err => console.error(err))
+            .catch(err => { if (DEV) console.error(err) })
     }
 
     const enterToSend = (e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === `Enter`) sendMessage(); }
