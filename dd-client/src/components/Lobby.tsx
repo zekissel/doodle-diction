@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
+import { DEV, API_URL, ChatInfo, LobbyProps, UserInfo, DataState } from "../typedef";
 import Game from "./Game";
 import Settings from "./Settings";
 
@@ -43,13 +43,38 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                     }
                 })
                 .catch(err => {
-                    console.error(err)
                     setProgress(DataState.Error);
+                    if (DEV) console.error(err);
+                    else setJoin();
                 })
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [rKey, uKey, uID, ready]);
+    }, []);
+
+    useEffect(() => {
+        
+        fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
+            .then(res => res.json())
+            .then(dat => {
+                if ('err' in dat) setJoin();
+                else {
+                    setUsers(dat['users']);
+                    setChats(dat['chats']);
+                    setUID(dat['uID']);
+                    setReady(dat['ready']);
+                    setRound(dat['round']);
+                    setPrevAnswer(dat['prev_answer']);
+                    setEnableChat(dat['chat']);
+                    setProgress(DataState.Success);
+                }
+            })
+            .catch(err => {
+                setProgress(DataState.Error);
+                if (DEV) console.error(err);
+                else setJoin();
+            })
+    }, []);
 
 
     const exitRoom = async () => {

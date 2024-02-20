@@ -1,5 +1,6 @@
 //export const API_URL = `http://localhost:8000`;
-export const API_URL = process.env['NODE_ENV'] == 'production' ? `https://doodlediction.com` : `http://localhost:8000`;
+export const DEV: boolean = process.env.NODE_ENV !== 'production';
+export const API_URL = DEV ? `http://localhost:8000` : `https://doodlediction.com`;
 
 export enum DataState { Loading, Success, Error }
 export enum MenuState { Main, Join, Learn, Game }
@@ -60,7 +61,7 @@ export interface RoomInfo {
     name: string;
     pw: string;
 
-    round: number;
+    cur_round: number;
     settings: SettingsInfo;
     cap: number;
     host: UserInfo;

@@ -5,6 +5,26 @@ import Join from './components/Join';
 import Learn from './components/Learn';
 import Lobby from './components/Lobby';
 
+window.addEventListener('touchmove', ev => {
+  if (
+    (ev.target as HTMLElement)!.nodeName !== 'CANVAS'
+  ) {
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+  };
+}, { passive: false });
+
+window.addEventListener('touchstart', ev => {
+  if (
+    (ev.target as HTMLElement)!.nodeName !== 'CANVAS' &&
+    (ev.target as HTMLElement)!.nodeName !== 'INPUT' &&
+    (ev.target as HTMLElement)!.nodeName !== 'BUTTON'
+  ) {
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+  };
+}, { passive: false });
+
 function App() {
 
   const [menu, setMenu] = useState<MenuState>(MenuState.Main);

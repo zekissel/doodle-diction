@@ -12,6 +12,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
     const [capacity, setCap] = useState(6);
     // prompt users for rooms with passwords != ''
     const [verify, setVerify] = useState(false);
+    const [joinIndex, setJoinIndex] = useState(-1);
     /* GUI errors for user feedback */
     const [hostError, setHError] = useState(``);
     const [joinError, setJError] = useState(``);
@@ -105,15 +106,12 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                     <legend><strong>Host</strong></legend>
                     <li>
                         <input type='text' name='rID' placeholder='Room name' onChange={e => setHostName(e.target.value)} defaultValue={hostName}/>
-                    </li>
-                    <li>
                         <input type='checkbox' name='public' defaultChecked={isPrivate} onClick={() => setPrivate(!isPrivate)}/><label>Private</label>
                     </li>
 
-                    { isPrivate && <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setHostPass(e.target.value)}/></li> }
+                    <li><input type='text' name='rPW' placeholder='Password (Optional)' onChange={e => setHostPass(e.target.value)}/></li>
 
-                    <li><label>Max players: { capacity }</label></li>
-                    <li><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/></li>
+                    <li><label>Max players: { capacity }</label><input type='range' name='capacity' min={1} max={10} defaultValue={capacity} onChange={e => setCap(Number(e.target.value))}/></li>
                     
         
                     <li><button onClick={hostGame}>Create</button></li>
@@ -124,10 +122,10 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 <fieldset className="joinbox">
                     <legend><strong>Join</strong></legend>
                     <li>
-                        { !verify && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
-                        { verify && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
+                        { (!verify || joinIndex !== -1) && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
+                        { (verify && joinIndex === -1) && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
                     </li>
-                    <li><button onClick={joinGame}>Connect</button></li>
+                    <li><button onClick={() => { setJoinIndex(-1); joinGame(); } }>Connect</button></li>
                     { joinError !== `` && <li>{ joinError }</li> }
                 </fieldset>
             </div>
@@ -139,7 +137,16 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                         { progress === DataState.Error && <li>Could not load public games</li> }
 
                         { progress === DataState.Success &&
-                            (rooms.length > 0 ? rooms.map(r => <li key={r.rID}>{ r.name }</li>) 
+                            (rooms.length > 0 ? rooms.map((r, i) => 
+                                <li key={i}><div>
+                                    <span>{ r.name }</span><br/>
+                                    <span>{ r.users.length }/{ r.cap }</span><br/>
+                                    { (verify && joinIndex === i) && 
+                                        <input type='text' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />
+                                    }
+                                    <button onClick={() => { setJoinIndex(i); setJoinName(r.name); joinGame(); }} disabled={(r.users.length >= r.cap) || (r.cur_round > 0)} >{ verify ? 'Enter' : (r.cur_round > 0 ? 'Game Started' : 'Join') }</button>
+                                </div></li>
+                            ) 
                             : <li>No public games yet</li>)
                         }
                     </ul>
