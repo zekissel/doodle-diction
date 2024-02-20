@@ -26,10 +26,10 @@ def server_chat(message: str, room: Room):
     room.save()
 
 
-app = Flask(__name__, static_folder='dist')
-CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 index_models()
 cache = connect()
+app = Flask(__name__, static_folder='dist')
+CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 
 @app.route('/')
