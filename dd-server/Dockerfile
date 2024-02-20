@@ -17,4 +17,3 @@ RUN adduser -D api
 USER api
 
 CMD [ "gunicorn", "--bind", "0.0.0.0:8000", "wsgi:app" ]
-#CMD ["flask", "run"]

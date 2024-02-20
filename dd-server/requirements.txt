@@ -1,5 +1,4 @@
 flask
 flask-cors
-redis
 redis-om
 gunicorn
