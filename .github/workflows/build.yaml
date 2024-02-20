@@ -31,6 +31,6 @@ jobs:
             git fetch
             git checkout -f prod
             git stash pop
-            git add -A
+            git add ./dist/
             git diff-index --quiet HEAD ||  git commit -am "automatic client html/assets build"
             git push origin prod
