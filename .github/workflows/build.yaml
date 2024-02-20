@@ -43,6 +43,10 @@ jobs:
           with:
             ref: prod
 
+        - name: Create dist directory
+          run: |
+            mkdir -p ./dd-server/dist
+
         - name: Download distribution directory
           uses: actions/download-artifact@v2
           with:
