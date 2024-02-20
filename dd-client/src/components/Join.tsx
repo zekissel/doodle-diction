@@ -68,16 +68,16 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             .catch(err => console.error(err))
     }
 
-    const joinGame = async () => {
+    const joinGame = async (name: string) => {
         voidError();
-        if (joinName === ``) return
+        if (name === ``) return
         if (verify && joinPass === ``) return
 
         fetch(`${API_URL}/join`, {
             method: "POST",
             headers: { "Content-Type": "application/json", }, 
             body: JSON.stringify({
-                'name': joinName,
+                'name': name,
                 'pw': joinPass,
                 'user': user,
             })
@@ -125,7 +125,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                         { (!verify || joinIndex !== -1) && <input type='text' name='rID' placeholder='Room name' onChange={e => setJoinName(e.target.value)} defaultValue={joinName}/>}
                         { (verify && joinIndex === -1) && <input type='text' name='pw' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />}
                     </li>
-                    <li><button onClick={() => { setJoinIndex(-1); joinGame(); } }>Connect</button></li>
+                    <li><button onClick={() => { setJoinIndex(-1); joinGame(joinName); } }>Connect</button></li>
                     { joinError !== `` && <li>{ joinError }</li> }
                 </fieldset>
             </div>
@@ -144,7 +144,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                                     { (verify && joinIndex === i) && 
                                         <input type='text' placeholder='Enter password' onChange={e => setJoinPass(e.target.value)} />
                                     }
-                                    <button onClick={() => { setJoinIndex(i); setJoinName(r.name); joinGame(); }} disabled={(r.users.length >= r.cap) || (r.cur_round > 0)} >{ verify ? 'Enter' : (r.cur_round > 0 ? 'Game Started' : 'Join') }</button>
+                                    <button onClick={() => { setJoinIndex(i); setJoinName(r.name); joinGame(r.name); }} disabled={(r.users.length >= r.cap) || (r.cur_round > 0)} >{ verify ? 'Enter' : (r.cur_round > 0 ? 'Game Started' : 'Join') }</button>
                                 </div></li>
                             ) 
                             : <li>No public games yet</li>)
