@@ -6,25 +6,6 @@ from flask_cors import CORS
 from schema import User, Chat, Game, Settings, Room, index_models, connect
 
 
-app = Flask(__name__, static_folder='dist')
-CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
-index_models()
-cache = connect()
-
-#@app.cli.command('initdb')
-#def initdb():
-#    index_models()
-#    g.cache = connect()
-
-@app.route('/')
-def home():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/assets/<path:filename>')
-def send_assets(filename):
-    return send_from_directory(app.static_folder+'/assets', filename)
-
-
 def get_current_time():
     current_time = datetime.datetime.now()
     formatted_hour = current_time.strftime('%H')
@@ -43,6 +24,22 @@ def server_chat(message: str, room: Room):
             'message': message 
         }))
     room.save()
+
+
+app = Flask(__name__, static_folder='dist')
+CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+index_models()
+cache = connect()
+
+
+@app.route('/')
+def home():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/assets/<path:filename>')
+def send_assets(filename):
+    return send_from_directory(app.static_folder+'/assets', filename)
+
 
 
 @app.route('/host', methods=['POST'])

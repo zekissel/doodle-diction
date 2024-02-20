@@ -102,6 +102,8 @@ spec:
         ports:
         - containerPort: 6379
           name: redis-stack
+        - containerPort: 6378
+          name: redis-core
         command:
           - redis-stack-server
           - "/etc/redis-config.conf"

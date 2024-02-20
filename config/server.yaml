@@ -52,13 +52,6 @@ spec:
         env:
         - name: REDIS_OM_URL
           value: redis://redis-service:6379
-        #- name: DOODLE_DB_PASSWORD
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: mysql-pass
-        #      key: password
-        #- name: WORDPRESS_DB_USER
-        #  value: wordpress
         ports:
         - containerPort: 8000
           name: server-port
