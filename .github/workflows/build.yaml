@@ -47,7 +47,7 @@ jobs:
           uses: actions/download-artifact@v2
           with:
             name: dist
-            path: ./dd-server
+            path: ./dd-server/dist
 
         - name: Commit build to production branch
           working-directory: ./
@@ -56,6 +56,6 @@ jobs:
           run: |
             git config --global user.email "github-actions"
             git config --global user.name "github-actions@github.com"
-            git add ./dd-server/dist
+            git add ./dd-server/dist/*
             git commit -m "Auto build production client"
             git push
