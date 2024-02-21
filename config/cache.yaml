@@ -1,0 +1,135 @@
+---
+# make Redis service available to other pods in the same namespace
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: doodle
+  labels:
+    app: cache
+spec:
+  ports:
+    - port: 6379
+      name: redis-stack
+    - port: 6378
+      name: redis-core
+  clusterIP: None
+  selector:
+    app: cache
+
+---
+# configure Redis master and worker nodes
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-configuration
+  namespace: doodle
+  labels:
+    app: cache
+data:
+  master.conf: |
+    maxmemory 1000mb
+    maxmemory-policy allkeys-lru
+    maxclients 20000
+    timeout 300
+    dbfilename dump.rdb
+    dir /data
+    appendonly yes
+    replica-read-only no
+    save ""
+  slave.conf: |
+    slaveof redis-stack-0.redis-service.redis 6379
+    maxmemory 1000mb
+    maxmemory-policy allkeys-lru
+    maxclients 20000
+    timeout 300
+    dir /data
+    appendonly yes
+    replica-read-only no
+    save ""
+
+---
+# deployment blueprint for stateful set: init containers and reserve/mount volumes
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stack
+  namespace: doodle
+spec:
+  serviceName: "redis-service"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cache
+  template:
+    metadata:
+      labels:
+        app: cache
+    spec:
+      initContainers:
+      - name: init-redis
+        image: redis/redis-stack-server:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -ex
+          # Extract pod ordinal index from the hostname to generate the redis server-id.
+          hostname_regex='-([0-9]+)$'
+          if [[ `hostname` =~ ${hostname_regex} ]]; then
+            ordinal=${BASH_REMATCH[1]}
+          else
+            exit 1
+          fi
+
+          # Copy the appropriate redis config files from the config map to their respective directories.
+          config_map_path="/mnt"
+          config_destination="/etc/redis-config.conf"
+
+          if [[ ${ordinal} -eq 0 ]]; then
+            cp "${config_map_path}/master.conf" "${config_destination}"
+          else
+            cp "${config_map_path}/slave.conf" "${config_destination}"
+          fi
+        volumeMounts:
+        - name: redis-claim
+          mountPath: /etc
+        - name: config-map
+          mountPath: /mnt/
+      containers:
+      - name: redis
+        image: redis/redis-stack-server:latest
+        ports:
+        - containerPort: 6379
+          name: redis-stack
+        - containerPort: 6378
+          name: redis-core
+        command:
+          - redis-stack-server
+          - "/etc/redis-config.conf"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /var/lib/redis-stack
+        - name: redis-claim
+          mountPath: /etc
+      volumes:
+      - name: config-map
+        configMap:
+          name: redis-configuration
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-claim
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: standard
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: standard
