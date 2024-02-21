@@ -32,16 +32,6 @@ app = Flask(__name__, static_folder='dist')
 CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 
-@app.route('/')
-def home():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/assets/<path:filename>')
-def send_assets(filename):
-    return send_from_directory(app.static_folder+'/assets', filename)
-
-
-
 @app.route('/host', methods=['POST'])
 def host():
 
@@ -299,4 +289,4 @@ def results(r_key: str):
     if room.cur_round != -1:
         return { 'err': 'Game in progress' }, 403
     
-    return { 'results': [g.dict() for g in room.games] }, 200
+    return { 'results': [g.dict() for g in room.games] }, 200\n\n@app.route('/')\ndef home():\n\treturn send_from_directory(app.static_folder, 'index.html')\n\n@app.route('/assets/<path:filename>')\ndef send_assets(filename):\n\treturn send_from_directory(app.static_folder+'/assets', filename)
