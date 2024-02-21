@@ -47,7 +47,7 @@ spec:
         tier: backend
     spec:
       containers:
-      - image: zekissel/dd-server
+      - image: zekissel/dd-server:main
         name: dd-server
         env:
         - name: REDIS_OM_URL
