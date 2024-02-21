@@ -1,0 +1,11 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "./dd-client/"
+    schedule:
+      interval: "weekly"
+ - package-ecosystem: "pip"
+    directory: "./dd-server/"
+    schedule:
+      interval: "weekly"
