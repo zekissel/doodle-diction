@@ -4,6 +4,10 @@ on:
     push:
         paths-ignore:
             - '.github/**'
+            - 'compose.yaml'
+            - 'LICENSE.md'
+            - 'README.md'
+            - 'dd-server/tests/**'
         branches:
         - main
 
