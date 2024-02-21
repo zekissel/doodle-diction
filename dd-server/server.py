@@ -25,7 +25,7 @@ def server_chat(message: str, room: Room):
         }))
     room.save()
 
-
+# connect and index database models
 index_models()
 cache = connect()
 app = Flask(__name__)
