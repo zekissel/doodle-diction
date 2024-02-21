@@ -5,7 +5,7 @@ updates:
     directory: "./dd-client/"
     schedule:
       interval: "weekly"
- - package-ecosystem: "pip"
+  - package-ecosystem: "pip"
     directory: "./dd-server/"
     schedule:
       interval: "weekly"
