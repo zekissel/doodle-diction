@@ -65,6 +65,7 @@ def leave():
         for u in room.users: User.delete(u.pk)
         for c in room.chats: Chat.delete(c.pk)
         for g in room.games: Game.delete(g.pk)
+        for e in room.exited_users: User.delete(e.pk)
         Settings.delete(room.settings.pk)
         Room.delete(request.json['r_key'])
         return { 'msg': 'Room removed' }, 200
