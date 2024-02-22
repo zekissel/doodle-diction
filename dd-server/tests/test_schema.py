@@ -63,7 +63,7 @@ class TestDatabaseSchema(unittest.TestCase):
         self.assertNotEqual(chat.author, None)
         self.assertEqual(chat.message, "Hello, World!")
 
-    def test_bad_game(self):
+    def test_bad_chat(self):
         """
         *  GIVEN a Chat model
         *  WHEN a new Chat is incorrectly created
