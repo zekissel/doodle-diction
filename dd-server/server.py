@@ -16,7 +16,7 @@ def get_current_time():
     return formatted_time
 
 def server_chat(message: str, room: Room):
-    server = User(**{ 'uID': '-1', 'name': '' })
+    server = User(**{ 'uID': '-1', 'name': '', 'ready': False })
     room.chats.append(Chat(**{ 
             'cID': len(room.chats) + 1, 
             'stamp': get_current_time(), 
@@ -39,7 +39,7 @@ def host():
         return { 'err': 'Room key in use' }
     
     try:
-        host = User(**{ 'uID': 0, 'name': request.json['host'] })
+        host = User(**{ 'uID': 0, 'name': request.json['host'], 'ready': False })
         host.save()
 
         request.json['host'] = host
@@ -121,7 +121,8 @@ def join():
 
     user = User(**{ 
         'uID': len(room.users), 
-        'name': request.json['user'],
+        'name': request.json['user'], 
+        'ready': False 
     })
     user.save()
 
