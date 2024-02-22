@@ -1,7 +1,11 @@
-name: Build Production Environment
+name: Build Production Container
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build Production Packages"]
+    types:
+      - completed
 
 env:
   REGISTRY: docker.io

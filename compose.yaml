@@ -2,7 +2,7 @@ services:
   site:
     build: dd-client/
     ports: 
-      - "8080:8080"
+      - 8080:8080
     volumes:
       - ./dd-client:/doodle/frontend
       - /doodle/frontend/node_modules
@@ -11,14 +11,14 @@ services:
       - dbase
     build: dd-server/
     ports:
-      - "8000:8000"
+      - 8000:8000
     volumes:
       - ./dd-server:/doodle/backend
     environment:
       - "FLASK_DEBUG=True"
       - "REDIS_OM_URL=redis://dbase:6379"
   dbase:
-    image: "redis/redis-stack:latest"
+    image: redis/redis-stack:latest
     ports:
       - 6379:6379
       - 8001:8001

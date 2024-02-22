@@ -8,7 +8,7 @@ class User(EmbeddedJsonModel):
 
 class Game(EmbeddedJsonModel):
     gID: str = Field(index=True)
-    data: List[str]
+    data: List[str] = Field(index=False, default=[])
 
 class Chat(EmbeddedJsonModel):
     cID: str = Field(index=True)

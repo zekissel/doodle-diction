@@ -4,17 +4,14 @@ on:
     push:
         paths-ignore:
             - '.github/**'
-            - 'compose.yaml'
-            - 'LICENSE.md'
-            - 'README.md'
+            - '*.yaml'
+            - '*.md'
             - 'dd-server/tests/**'
         branches:
         - main
 
 env:
     SERVER_CONFIG: "\"\n\n@app.route('/')\ndef home():\n\treturn send_from_directory(app.static_folder, 'index.html')\n\n@app.route('/assets/<path:filename>')\ndef send_assets(filename):\n\treturn send_from_directory(app.static_folder+'/assets', filename)\""
-    REGISTRY: docker.io
-    IMAGE_NAME: zekissel/dd-server
 
 jobs:
     build:
@@ -94,68 +91,3 @@ jobs:
             git add ./dd-server/*.py
             git diff-index --quiet HEAD || git commit -am "Auto compile client and configure server"
             git push origin prod
-
-    containerize:
-
-      runs-on: ubuntu-latest
-      needs: build
-      permissions:
-        contents: read
-        packages: write
-        id-token: write
-  
-      steps:
-        # Install the cosign tool
-        # https://github.com/sigstore/cosign-installer
-        - name: Install cosign
-          uses: sigstore/cosign-installer@v3.1.1
-          with:
-            cosign-release: 'v2.1.1'
-  
-        # Set up BuildKit Docker container builder to be able to build
-        # multi-platform images and export cache
-        # https://github.com/docker/setup-buildx-action
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3.0.0
-  
-        # Login against a Docker registry
-        # https://github.com/docker/login-action
-        - name: Log into docker.io
-          uses: docker/login-action@v3.0.0
-          with:
-            username: zekissel
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-  
-        # Extract metadata (tags, labels) for Docker
-        # https://github.com/docker/metadata-action
-        - name: Extract Docker metadata
-          id: meta
-          uses: docker/metadata-action@v5.0.0
-          with:
-            images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-  
-        # Build and push Docker image with Buildx
-        # https://github.com/docker/build-push-action
-        - name: Build and push Docker image
-          id: build-and-push
-          uses: docker/build-push-action@v5.0.0
-          with:
-            context: "https://github.com/zekissel/doodle-diction.git#prod:dd-server"
-            push: true
-            tags: ${{ steps.meta.outputs.tags }}
-            labels: ${{ steps.meta.outputs.labels }}
-            cache-from: type=gha
-            cache-to: type=gha,mode=max
-  
-        # Sign the resulting Docker image digest
-        # This will only write to the public Rekor transparency log when the Docker
-        # repository is public to avoid leaking data.
-        # https://github.com/sigstore/cosign
-        - name: Sign the published Docker image
-          env:
-            # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-            TAGS: ${{ steps.meta.outputs.tags }}
-            DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          # This step uses the identity token to provision an ephemeral certificate
-          # against the sigstore community Fulcio instance.
-          run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}

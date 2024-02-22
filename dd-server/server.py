@@ -206,7 +206,7 @@ def ready():
         for u in room.users: 
             u.ready = False
             u.save()
-            if room.cur_round == 0: room.games.append(Game(**{ 'gID': u.uID, 'data': [] }))
+            if room.cur_round == 0: room.games.append(Game(**{ 'gID': u.uID }))
 
         room.cur_round += 1
 
