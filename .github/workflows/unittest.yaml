@@ -29,4 +29,4 @@ jobs:
             - name: Run tests
               working-directory: .
               run: |
-                  python -m unittest -v dd-server/tests/unit/test_schema.py
+                  python -m unittest -v dd-server/tests/unit/test_*.py
