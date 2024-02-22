@@ -12,7 +12,8 @@ env:
   IMAGE_NAME: zekissel/dd-server
 
 jobs:
-  containerize:
+  on-success:
+    name: containerize
 
     runs-on: ubuntu-latest
     permissions:
