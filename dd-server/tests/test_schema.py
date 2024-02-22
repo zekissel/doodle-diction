@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import Mock
-from pydantic import ValidationError
 from ..schema import Room, User, Game, Chat, Settings, index_models
 
 class TestDatabaseSchema(unittest.TestCase):
@@ -28,7 +27,7 @@ class TestDatabaseSchema(unittest.TestCase):
         *  WHEN a new User is incorrectly created
         *  THEN check an error is raised
         """
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             _ = User(uID=0)
 
     def test_new_game(self):
@@ -47,7 +46,7 @@ class TestDatabaseSchema(unittest.TestCase):
         *  WHEN a new Game is incorrectly created
         *  THEN check an error is raised
         """
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             _ = Game()
 
     def test_new_chat(self):
@@ -69,7 +68,7 @@ class TestDatabaseSchema(unittest.TestCase):
         *  WHEN a new Chat is incorrectly created
         *  THEN check an error is raised
         """
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             _ = Chat(message="Not enough fields")
     
     def test_new_room(self):
@@ -97,7 +96,7 @@ class TestDatabaseSchema(unittest.TestCase):
         *  WHEN a new Room is incorrectly created
         *  THEN check an error is raised
         """
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             _ = Room(rID=1, name='Room_Name', pw='', cap=4)
 
     def test_new_settings(self):
