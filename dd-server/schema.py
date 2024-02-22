@@ -4,7 +4,7 @@ from typing import List, Optional
 class User(EmbeddedJsonModel):
     uID: str = Field(index=True)
     name: str = Field(index=True)
-    ready: bool
+    ready: bool = Field(default=False)
 
 class Game(EmbeddedJsonModel):
     gID: str = Field(index=True)

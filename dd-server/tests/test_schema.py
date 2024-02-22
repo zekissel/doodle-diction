@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from ...schema import Room, User, Game, Chat, Settings, index_models
+from ..schema import Room, User, Game, Chat, Settings, index_models
 
 class TestDatabaseSchema(unittest.TestCase):
 
@@ -20,6 +20,15 @@ class TestDatabaseSchema(unittest.TestCase):
         self.assertEqual(user.uID, '0')
         self.assertEqual(user.name, 'User_Name')
         self.assertFalse(user.ready)
+
+    def test_bad_user(self):
+        """
+        *  GIVEN a User model
+        *  WHEN a new User is incorrectly created
+        *  THEN check an error is raised
+        """
+        with self.assertRaises(TypeError):
+            _ = User(uID=0)
 
     def test_new_game(self):
         """
