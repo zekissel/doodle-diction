@@ -73,9 +73,9 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ github.token }}
           run: |
-            rm -rf ./dd-server/dist/*
+            rm -rf ./dd-server/dist
             mkdir -p ./dd-server/dist/assets
-            mv -f ./dd-server/*.html ./dd-server/dist/index.html
+            mv -f ./dd-server/index.html ./dd-server/dist/index.html
             mv -f ./dd-server/assets/*.css ./dd-server/dist/assets/main.css
             mv -f ./dd-server/assets/*.js ./dd-server/dist/assets/main.js
             sed -i 's@"/assets/index.*css"@"/assets/main.css"@' ./dd-server/dist/index.html
