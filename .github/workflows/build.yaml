@@ -79,6 +79,7 @@ jobs:
             mv -f ./dd-server/site.webmanifest ./dd-server/dist/assets/
             mv -f ./dd-server/*.png ./dd-server/dist/assets/
             mv -f ./dd-server/favicon.ico ./dd-server/dist/assets/
+            
             mv -f ./dd-server/index.html ./dd-server/dist/index.html
             mv -f ./dd-server/assets/*.css ./dd-server/dist/assets/main.css
             mv -f ./dd-server/assets/*.js ./dd-server/dist/assets/main.js

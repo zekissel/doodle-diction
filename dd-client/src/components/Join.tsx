@@ -92,12 +92,11 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
   }
   const joinGame = async (name: string) => {
     voidError();
-    if (name === ``) {
+    if (name === `` || (verify && joinPass === ``)) {
       setJNError(true); 
       setTimeout(() => setJNError(false), 5000);
       return 
     }
-    if (verify && joinPass === ``) return
 
     fetch(`${API_URL}/join`, {
       method: "POST",
@@ -204,7 +203,9 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                     name='pw' 
                     placeholder='Enter Password' 
                     onChange={e => setJoinPass(e.target.value)}
-                    onKeyDown={enterJoin} />
+                    onKeyDown={enterJoin}
+                    style={ noJoinNameError ? errorStyle : undefined}  />
+                    
                   </>
                 }
             </li>
