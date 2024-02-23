@@ -2,8 +2,10 @@ name: Server & Schema Verification
 
 on:
     push:
-        branches:
-            - main
+      paths:
+        - dd-server/**
+      branches:
+          - main
 
 jobs:
   test-backend:
