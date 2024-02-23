@@ -11,7 +11,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
   const [joinName, setJoinName] = useState(``);
   const [joinPass, setJoinPass] = useState(``);
-  const resetJoin = () => { setJoinName(``); setJoinPass(``); setVerify(false); }
+  //const resetJoin = () => { setJoinName(``); setJoinPass(``); setVerify(false); }
   // server prompts users for rooms with passwords != ''
   const [verify, setVerify] = useState(false);
   const [joinIndex, setJoinIndex] = useState(-1);
