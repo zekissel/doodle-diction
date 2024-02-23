@@ -12,7 +12,7 @@ on:
         - main
 
 env:
-    SERVER_CONFIG: "\"\n\n@app.route('/')\ndef home():\n\treturn send_from_directory(app.static_folder, 'index.html')\n\n@app.route('/assets/<path:filename>')\ndef send_assets(filename):\n\treturn send_from_directory(app.static_folder+'/assets', filename)\""
+    SERVER_CONFIG: "\"\n\n@app.route('/')\ndef home():\n\treturn send_from_directory(app.static_folder, 'index.html')\n\n@app.route('/assets/<path:filename>')\ndef send_assets(filename):\n\treturn send_from_directory(app.static_folder+'/assets', filename)\n\n@app.route('/<path:filename>')\ndef send_resource(filename):\n\treturn send_from_directory(app.static_folder, filename)\""
 
 jobs:
     build:
