@@ -78,9 +78,9 @@ jobs:
             mv ./dd-server/assets/*.css ./dd-server/dist/assets/main.css
             mv ./dd-server/assets/*.js ./dd-server/dist/assets/main.js
             sed -i 's@"/assets/index.*css"@"/assets/main.css"@' ./dd-server/dist/index.html
-            INTEGRITY=$(cat ./dd-server/dist/assets/main.js | openssl dgst -sha384 -binary | openssl enc -base64 -A)
-            echo $INTEGRITY
-            sed -i "s@/assets/index.*js\"@/assets/main.js\" integrity=\"sha384-$INTEGRITY\"@" ./dd-server/dist/index.html
+            integrity=$(cat ./dd-server/dist/assets/main.js | openssl dgst -sha384 -binary | openssl enc -base64 -A)
+            echo $integrity
+            sed -i "s@/assets/index.*js\"@/assets/main.js\" integrity=\"sha384-$integrity\"@" ./dd-server/dist/index.html
 
             sed -i 's@dbase@0.0.0.0@' ./dd-server/schema.py
             sed -i "s@__name__@__name__, static_folder='dist'@" ./dd-server/server.py
