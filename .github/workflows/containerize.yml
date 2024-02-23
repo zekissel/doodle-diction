@@ -76,3 +76,10 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+  on-failure:
+    name: notify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send a failure notification
+        run: echo "The production container build failed"
