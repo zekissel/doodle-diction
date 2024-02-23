@@ -11,6 +11,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
 
   const [joinName, setJoinName] = useState(``);
   const [joinPass, setJoinPass] = useState(``);
+  const resetJoin = () => { setJoinName(``); setJoinPass(``); setVerify(false); }
   // server prompts users for rooms with passwords != ''
   const [verify, setVerify] = useState(false);
   const [joinIndex, setJoinIndex] = useState(-1);
@@ -20,9 +21,11 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
   const [noJoinNameError, setJNError] = useState(false);
   const [hostError, setHError] = useState(``);
   const [joinError, setJError] = useState(``);
+  const [pubError, setPError] = useState(``);
   const voidError = () => { 
     setHError(``); 
-    setJError(``); 
+    setJError(``);
+    setPError(``);
     setHNError(false); 
     setJNError(false);
   }
@@ -84,6 +87,9 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
         .catch(err => console.error(err))
   }
 
+  const enterJoin = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === `Enter`) joinGame(joinName);
+  }
   const joinGame = async (name: string) => {
     voidError();
     if (name === ``) {
@@ -104,8 +110,11 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
       .then(res => res.json())
       .then(dat => {
         if ('err' in dat) {
-          setJError(dat['err'])
+          if (joinIndex > -1) setPError(dat['err']);
+          else setJError(dat['err'])
           setTimeout(() => setJError(``), 5000);
+          setTimeout(() => setPError(``), 5000);
+          setJoinPass(``);
         }
         else if ('auth' in dat) setVerify(true);
         else {
@@ -183,25 +192,32 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                         name='rID' 
                         placeholder='Room Name' 
                         onChange={e => setJoinName(e.target.value)} 
-                        defaultValue={joinName}
-                        style={ noJoinNameError ? errorStyle : undefined} /> 
+                        defaultValue={joinIndex === -1 ? joinName : undefined}
+                        style={ noJoinNameError ? errorStyle : undefined} 
+                        onKeyDown={enterJoin}
+                        onFocus={() => setJoinIndex(-1)} /> 
                 }
                 { (verify && joinIndex === -1) && 
+                  <>
+                    <label>Room: { joinName }</label>
                     <input type='text' 
                     name='pw' 
                     placeholder='Enter Password' 
-                    onChange={e => setJoinPass(e.target.value)} />
+                    onChange={e => setJoinPass(e.target.value)}
+                    onKeyDown={enterJoin} />
+                  </>
                 }
             </li>
 
             <li>
-              { joinError !== `` && <li>{ joinError }</li> }
+              { joinIndex === -1 && joinError !== `` && <li>{ joinError }</li> }
               <button 
                 onClick={() => { 
                     setJoinIndex(-1); joinGame(joinName); 
                 }}
                 id='joinsub'>Connect
               </button>
+              { verify && joinIndex === -1 && <button onClick={() => setVerify(false)}>Cancel</button> }
             </li>
 
             
@@ -221,27 +237,32 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
           }
 
           { progress === DataState.Success &&
+
             (rooms.length > 0 ? 
               rooms.map((r, i) => 
-                <li key={i}><div>
-                  <span>{ r.name }</span><br/>
+                <li key={i}><fieldset className="pubgame">
+                  <legend>{ r.name }</legend>
                   <span>{ r.users.length }/{ r.cap }</span><br/>
+                  { (joinIndex > -1 && pubError !== ``) && <li>{ pubError }</li> }
                   { (verify && joinIndex === i) && 
-                    <input type='text' 
+                    <input type='text'
                         placeholder='Enter password' 
-                        onChange={e => setJoinPass(e.target.value)} 
+                        onChange={e => setJoinPass(e.target.value)}
+                        onKeyDown={enterJoin} 
                     />
                   }
-                  <button 
+                  <button id="joinpub"
                     onClick={() => { 
-                      setJoinIndex(i); 
+                      setJoinIndex(i);
+                      setVerify(false);
                       setJoinName(r.name); 
                       joinGame(r.name); 
                     }} 
                     disabled={(r.users.length >= r.cap) || (r.cur_round > 0)}>
-                      { verify ? 'Enter' : (r.cur_round > 0 ? 'Game Started' : 'Join') }
+                      { verify && joinIndex === i ? 'Enter' : (r.cur_round > 0 ? 'Game Started' : 'Join') }
                   </button>
-                </div></li>
+                  { verify && joinIndex === i && <button onClick={() => setVerify(false)}>Cancel</button> }
+                  </fieldset></li>
               ) :
               <li>No public games yet...</li>
             )

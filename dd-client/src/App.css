@@ -72,6 +72,10 @@ fieldset {
   border-radius: 2.5%;
 }
 
+.pubgame {
+  margin: 0;
+}
+
 .joinbox, .hostbox, .pubbox {
   height: 11rem;
   width: 20rem;
@@ -196,7 +200,7 @@ legend {
   font-weight: 600;
 }
 
-#play:hover, #demo:hover, #hostsub:hover, #joinsub:hover {
+#play:hover, #demo:hover, #hostsub:hover, #joinsub:hover, #joinpub:hover {
   background-color: #4a4f5f;
 }
 
@@ -222,7 +226,7 @@ legend {
   width: 80%;
 }
 
-#hostsub, #joinsub {
+#hostsub, #joinsub, #joinpub {
   margin: 0 .5rem;
   font-size: 1.2rem;
   background-color: #353a47;
