@@ -69,11 +69,12 @@ jobs:
             path: ./dd-server
 
         - name: Commit client and server builds to production branch
-          working-directory: ./
+          working-directory: .
           env:
             GITHUB_TOKEN: ${{ github.token }}
           run: |
             mkdir -p ./dd-server/dist/assets
+            rm -rf ./dd-server/dist/*
             mv ./dd-server/index.html ./dd-server/dist/
             mv ./dd-server/assets/*.css ./dd-server/dist/assets/main.css
             mv ./dd-server/assets/*.js ./dd-server/dist/assets/main.js
