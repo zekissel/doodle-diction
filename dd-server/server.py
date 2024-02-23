@@ -299,3 +299,7 @@ def home():
 @app.route('/assets/<path:filename>')
 def send_assets(filename):
 	return send_from_directory(app.static_folder+'/assets', filename)
+
+@app.route('/<path:filename>')
+def send_resource(filename):
+	return send_from_directory(app.static_folder, filename)
