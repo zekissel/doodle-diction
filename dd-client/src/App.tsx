@@ -37,17 +37,27 @@ function App() {
   return (
       <>
         { menu === MenuState.Main &&
-          <menu>
+          <>
             <h1>Doodle Diction</h1>
-            <li onClick={setJoinIfNameSet}>Play</li>
-            <li onClick={() => setMenu(MenuState.Learn)}>How to Play</li>
-            <li>
-              <input type='text' placeholder='Nickname' onChange={saveUser} defaultValue={user} onKeyDown={enterToJoin} />
-            </li>
-          </menu>
+            <menu>
+              <li>
+                <input type='text' 
+                  id='nickname'
+                  placeholder='Nickname' 
+                  onChange={saveUser} 
+                  defaultValue={user} 
+                  onKeyDown={enterToJoin} 
+                />
+              </li>
+              <li onClick={setJoinIfNameSet} id='play'>Play</li>
+              <li onClick={() => setMenu(MenuState.Learn)} id='demo'>How to Play</li>
+              
+            </menu>
+          </>
         }
 
-        { menu === MenuState.Join && <Join setMain={goBack} setGame={goForward} setRKey={setRoomKey} setUKey={setUserKey} user={user} /> }
+        { menu === MenuState.Join && 
+          <Join setMain={goBack} setGame={goForward} setRKey={setRoomKey} setUKey={setUserKey} user={user} /> }
         { menu === MenuState.Learn && <Learn setMain={goBack} /> }
         
         { menu === MenuState.Game && 

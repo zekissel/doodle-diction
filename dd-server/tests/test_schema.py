@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import Mock
 from ..schema import Room, User, Game, Chat, Settings, index_models
 
 class TestDatabaseSchema(unittest.TestCase):

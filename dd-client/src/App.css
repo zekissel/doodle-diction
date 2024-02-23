@@ -1,8 +1,24 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
+  
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(315deg, #89909F, #191716);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  padding: 4rem 0 0 0;
+  margin: 0;
 }
 
 ul {
@@ -16,30 +32,53 @@ li {
   margin: 0 1rem;
 }
 
+input {
+  font-size: 1.2rem;
+}
+
 menu {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  padding: 0;
+  margin: 0;
 }
 
-.menurow {
+#tutorial {
+  width: 60vw;
+  height: 40vh;
+}
+
+ol {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.rowstyle {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: .5rem;
 }
 
 fieldset {
   display: flex;
   flex-direction: column;
+  background-color: #242424;
+  border-radius: 2.5%;
 }
 
 .joinbox, .hostbox, .pubbox {
-  height: 10rem;
+  height: 11rem;
   width: 20rem;
+}
+
+.pubbox {
+  width: 40rem;
 }
 
 main {
@@ -49,6 +88,11 @@ main {
   align-items: center;
 }
 
+legend {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: .2rem
+}
 
 .lobbypanel {
   display: flex;
@@ -136,9 +180,72 @@ main {
   touch-action: none;
 }
 
+#play, #demo {
+  
+  margin: .5rem 0;
+  border-radius: 5%;
+
+  background-color: #353a47;
+  border: 1px solid #aaa;
+  color: #fff;
+}
+
+#play {
+  padding: 1rem 3.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+#play:hover, #demo:hover, #hostsub:hover, #joinsub:hover {
+  background-color: #4a4f5f;
+}
+
+#demo {
+  padding: .5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 450;
+}
+
+#nickname {
+  margin: .5rem 0;
+  width: 100%;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.hostfield {
+  width: 100%;
+  margin: .2rem 0;
+}
+
+.maxwidth {
+  width: 80%;
+}
+
+#hostsub, #joinsub {
+  margin: 0 .5rem;
+  font-size: 1.2rem;
+  background-color: #353a47;
+  border: 1px solid #fff;
+}
+
+#joinsub {
+  margin: .4rem 0;
+}
+
+#return {
+  font-size: 1rem;
+  margin: 2rem 0 1rem 0;
+}
+
 @media screen and (max-width: 768px) {
   main {
     flex-direction: column;
+  }
+
+  #return {
+    font-size: 1rem;
+    margin: 1rem 0 .3rem 0;
   }
   
   .joinbox, .hostbox, .pubbox {
@@ -146,10 +253,15 @@ main {
   }
 
   .joinbox {
-    height: 5rem;
+    height: 6.5rem;
   }
 
-  .menurow {
+  .pubbox {
+    max-width: 80vw;
+    margin: 0;
+  }
+
+  .rowstyle {
     flex-direction: column;
   }
 
@@ -163,5 +275,12 @@ main {
 
   .gamefield {
     width: 40%;
+  }
+
+  #nickname {
+    margin: .5rem 0;
+    width: 60%;
+    font-size: 1.8rem;
+    text-align: center;
   }
 }
