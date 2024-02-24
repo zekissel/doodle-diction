@@ -69,7 +69,9 @@ function Settings ({ round, setShowSettings, rKey, uKey }: SettingsProps) {
                     <button onClick={() => setMaxRounds(maxRounds + 1)} disabled={maxRounds > 10}>&gt;</button>
                 </li>
                 <li>Chat:
-                    <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEnableChat(e.target.value === 'true')}>
+                    <select 
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEnableChat(e.target.value === 'true')}
+                    >
                         <option value="true" selected={enableChat}>Enabled</option>
                         <option value="false" selected={!enableChat}>Disabled</option>
                     </select>

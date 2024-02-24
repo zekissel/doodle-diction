@@ -5,77 +5,56 @@ import Settings from "./Settings";
 
 function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
 
-    const [ready, setReady] = useState(false);
-    const [curMessage, setMessage] = useState(``);
-    const [enableChat, setEnableChat] = useState(true);
+  const [ready, setReady] = useState(false);
+  const [curMessage, setMessage] = useState(``);
+  const [enableChat, setEnableChat] = useState(true);
 
-    const [curRound, setRound] = useState(0);
-    const [prevAnswer, setPrevAnswer] = useState(``);
+  const [curRound, setRound] = useState(0);
+  const [prevAnswer, setPrevAnswer] = useState(``);
 
-    const [users, setUsers] = useState<UserInfo[]>([]);
-    const [chats, setChats] = useState<ChatInfo[]>([]);
-    const [progress, setProgress] = useState<DataState>(DataState.Loading);
-    
-    const [confirmExit, setExit] = useState(false);
-    const endChat = useRef<HTMLLIElement>(null);
+  const [users, setUsers] = useState<UserInfo[]>([]);
+  const [chats, setChats] = useState<ChatInfo[]>([]);
+  const [progress, setProgress] = useState<DataState>(DataState.Loading);
+  
+  const [confirmExit, setExit] = useState(false);
+  const endChat = useRef<HTMLLIElement>(null);
 
-    const [showSettings, setShowSettings] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
     /* 
-        update lobby info from server: 
-        personal user info, other users' info, chat info, meta game info (rounds)
+      update lobby info from server: 
+      personal user info, other users' info, chat info, meta game info (rounds)
     */
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
-                .then(res => res.json())
-                .then(dat => {
-                    if ('err' in dat) setJoin();
-                    else {
-                        setUsers(dat['users']);
-                        setChats(dat['chats']);
-                        setUID(dat['uID']);
-                        setReady(dat['ready']);
-                        setRound(dat['round']);
-                        setPrevAnswer(dat['prev_answer']);
-                        setEnableChat(dat['chat']);
-                        setProgress(DataState.Success);
-                    }
-                })
-                .catch(err => {
-                    setProgress(DataState.Error);
-                    if (DEV) console.error(err);
-                    else setJoin();
-                })
-        }, 2000);
+    const fetchLobbyInfo = async () => {
+      fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
+        .then(res => res.json())
+        .then(dat => {
+          if ('err' in dat) setJoin();
+          else {
+            setChats(dat['chats']);
+            setUsers(dat['users']);
+            setUID(dat['uID']);
+            setReady(dat['ready']);
+            setRound(dat['round']);
+            setPrevAnswer(dat['prev_answer']);
+            setEnableChat(dat['chat']);
+            setProgress(DataState.Success);
+          }
+        })
+        .catch(err => {
+          setProgress(DataState.Error);
+          if (DEV) console.error(err);
+          else setJoin();
+        })
+    }
 
+    useEffect(() => {
+        fetchLobbyInfo();
+        const interval = setInterval(() => {
+            fetchLobbyInfo();
+        }, 2000);
         return () => clearInterval(interval);
     }, []);
-
-    useEffect(() => {
-        
-        fetch(`${API_URL}/lobby/${rKey}/${uKey}`)
-            .then(res => res.json())
-            .then(dat => {
-                if ('err' in dat) setJoin();
-                else {
-                    setUsers(dat['users']);
-                    setChats(dat['chats']);
-                    setUID(dat['uID']);
-                    setReady(dat['ready']);
-                    setRound(dat['round']);
-                    setPrevAnswer(dat['prev_answer']);
-                    setEnableChat(dat['chat']);
-                    setProgress(DataState.Success);
-                }
-            })
-            .catch(err => {
-                setProgress(DataState.Error);
-                if (DEV) console.error(err);
-                else setJoin();
-            })
-    }, []);
-
 
     const exitRoom = async () => {
         fetch(`${API_URL}/exit`, {
@@ -141,9 +120,14 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
     }
 
     const altColor = { backgroundColor: `#1c1c1c`};
+    /*
     useEffect(() => {
-        endChat.current?.scrollIntoView({ behavior: `smooth`, block: `nearest`});
-    }, [chats]);
+      endChat.current?.scrollIntoView({ 
+        behavior: `smooth`, 
+        block: `nearest`, 
+        inline: `start`
+      });
+    }, [chats]);*/
 
     return (
         <main>
@@ -159,7 +143,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                    <Settings round={curRound} setShowSettings={setShowSettings} rKey={rKey} uKey={uKey} />
                 }
 
-                <fieldset className="lobbyfield" id="roombox"><legend><h3>Room: { name }</h3></legend>
+                <fieldset className="lobbyfield" id="roombox"><legend><h3>Lobby: { name }</h3></legend>
                     <button onClick={() => setExit(true)}>Exit</button>
                     { Number(uID) === 0 && 
                         <button onClick={() => setShowSettings(true)}>Settings</button> 

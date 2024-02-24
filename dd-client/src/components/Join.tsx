@@ -54,6 +54,9 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
     return () => clearInterval(interval);
   }, []);
 
+  const enterHost = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === `Enter`) hostGame();
+  }
   const hostGame = async () => {
     voidError();
     if (hostName === ``) { 
@@ -94,7 +97,12 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
     voidError();
     if (name === `` || (verify && joinPass === ``)) {
       setJNError(true); 
-      setTimeout(() => setJNError(false), 5000);
+      if (verify) setJError(`Enter password`);
+      else setJError(`Enter room name`);
+      setTimeout(() => {
+        setJNError(false);
+        setJError(``);
+      }, 5000);
       return 
     }
 
@@ -125,6 +133,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
   }
 
   const errorStyle = { border: `1px solid red` }
+  const redStyle = { color: `red` }
 
   return (
 
@@ -144,6 +153,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
               defaultValue={hostName}
               className='maxwidth'
               style={noHostNameError ? errorStyle : undefined}
+              onKeyDown={enterHost}
             />
           </li>
 
@@ -179,7 +189,7 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             </button>
           </li>
 
-          { hostError !== `` && <li>{ hostError }</li> }
+          { hostError !== `` && <li style={redStyle}>{ hostError }</li> }
         </fieldset>
 
         <fieldset className='joinbox'>
@@ -211,7 +221,6 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
             </li>
 
             <li>
-              { joinIndex === -1 && joinError !== `` && <li>{ joinError }</li> }
               <button 
                 onClick={() => { 
                     setJoinIndex(-1); joinGame(joinName); 
@@ -221,7 +230,9 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
               { verify && joinIndex === -1 && <button onClick={() => setVerify(false)}>Cancel</button> }
             </li>
 
-            
+            { joinIndex === -1 && joinError !== `` && 
+              <li style={redStyle}>{ joinError }</li> 
+            }
         </fieldset>
 
       </div>
@@ -244,7 +255,9 @@ function Join ({ setMain, setGame, setRKey, setUKey, user }: JoinProps) {
                 <li key={i}><fieldset className="pubgame">
                   <legend>{ r.name }</legend>
                   <span>{ r.users.length }/{ r.cap }</span><br/>
-                  { (joinIndex > -1 && pubError !== ``) && <li>{ pubError }</li> }
+                  { (joinIndex > -1 && pubError !== ``) && 
+                    <li style={redStyle}>{ pubError }</li> 
+                  }
                   { (verify && joinIndex === i) && 
                     <input type='text'
                         placeholder='Enter password' 

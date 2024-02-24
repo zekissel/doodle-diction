@@ -11,7 +11,7 @@ function Paper({ results }: ResultProps) {
         <ul className="resultpaper">
             { results.data.map((answer, i) => 
                 <li key={i} className="resultans">
-                    { i % 2 === 0 ? <p>{ answer }</p> : <img src={answer} alt="Drawing" style={imgStyle}/> }
+                    { i % 2 === 0 ? <p>{ answer }</p> : <img src={answer} alt="Drawing" style={imgStyle} /> }
                 </li>
             )}
         </ul>
@@ -70,7 +70,7 @@ function Game ({ round, prevAnswer, ready, setReady, rKey, uKey }: GameProps) {
             { (!ready && round === 1) && 
                 <>
                     <h3>Type an interesting or creative sentence: </h3>
-                    <input type="text" id="textanswer" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMyAnswer(e.target.value)}/>
+                    <textarea id="textanswer" rows={5} cols={24} wrap="soft" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMyAnswer(e.target.value)}></textarea><br/>
                 </>
             }
 
@@ -88,7 +88,7 @@ function Game ({ round, prevAnswer, ready, setReady, rKey, uKey }: GameProps) {
 
                     <h3>Type a sentence to caption the picture: </h3>
                     <img src={prevAnswer} alt="Picture drawn last round by other player" style={imgStyle}/>
-                    <input type="text" id="textanswer" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMyAnswer(e.target.value)}/>
+                    <textarea id="textanswer" rows={3} cols={24} wrap="soft" value={myAnswer} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMyAnswer(e.target.value)}></textarea><br/>
                 </>
             }
 
