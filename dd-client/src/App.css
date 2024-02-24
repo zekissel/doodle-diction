@@ -205,7 +205,17 @@ legend {
 }
 
 .resultans {
-  width: 100%;
+  width: 70%;
+  margin: 0;
+  padding: 0;
+}
+
+.resultpaper {
+  max-width: 40vw;
+  min-height: 5vh;
+  max-height: 30vh;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
 .canvaswrap {
@@ -274,6 +284,26 @@ legend {
   margin-bottom: 0;
 }
 
+.popupexit {
+  z-index: 10;
+  background-color: #353a47;
+  padding: 2rem 4rem;
+  border-radius: 5%;
+  position: fixed;
+  top: 3rem;
+  opacity: .87;
+}
+
+.popupsettings {
+  z-index: 10;
+  background-color: #353a47;
+  padding: 2rem 4rem;
+  border-radius: 5%;
+  position: fixed;
+  top: 4rem;
+  opacity: .87;
+}
+
 @media screen and (max-width: 768px) {
   main {
     flex-direction: column;
@@ -318,6 +348,13 @@ legend {
     min-width: 95vw;
     padding: 0;
     margin: 0 0 1rem 0;
+  }
+
+  .resultpaper {
+    max-width: 100vw;
+    min-height: 5vh;
+    max-height: 30vh;
+    margin-left: -3rem;
   }
 
   #chatbox {

@@ -43,7 +43,7 @@ function Settings ({ round, setShowSettings, rKey, uKey }: SettingsProps) {
     }
 
     return (
-        <fieldset><legend>Settings</legend>
+        <fieldset className="popupsettings"><legend>Settings</legend>
             <ul id='settingsbox'>
                 <li>Maximum # players:  
                     <button onClick={() => setMaxPlayers(maxPlayers - 1)} disabled={maxPlayers < 2}>&lt;</button>

@@ -7,15 +7,26 @@ const imgStyle = { backgroundColor: `#f0f0f0`, borderRadius: `8px`, boxShadow: `
 
 function Paper({ results }: ResultProps) {
 
-    return (
-        <ul className="resultpaper">
-            { results.data.map((answer, i) => 
-                <li key={i} className="resultans">
-                    { i % 2 === 0 ? <p>{ answer }</p> : <img src={answer} alt="Drawing" style={imgStyle} /> }
-                </li>
-            )}
-        </ul>
-    )
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = () => setVisible(!visible);
+
+  return (
+    <>
+      <ul className="resultpaper">
+        { results.data.map((answer, i) => 
+          <li key={i} className="resultans">
+            { i === 0 && <h5 onClick={toggleVisible}>{ answer }</h5> }
+            { visible && i !== 0 && (i % 2 === 0 ? 
+              <p>{ answer }</p>
+                : 
+              <img src={answer} alt="Drawing" style={imgStyle} />)
+            }
+          </li>
+        )}
+      </ul>
+      <hr/>
+    </>
+  )
 }
 
 function Postgame ({ rKey }: PostProps) {
@@ -32,7 +43,7 @@ function Postgame ({ rKey }: PostProps) {
 
 
     return (
-        results.map((game, i) => <Paper key={i} results={game} />)
+      results.map((game, i) => <Paper key={i} results={game} />)
     )
 }
 
@@ -95,7 +106,10 @@ function Game ({ round, prevAnswer, ready, setReady, rKey, uKey }: GameProps) {
             { (!ready && round > 0) && <button onClick={submitAnswer}>Submit</button> }
 
             { round === -1 && 
+              <>
+                <h3>Select the first sentence to reveal entire page.</h3>
                 <Postgame rKey={rKey}/>
+              </>
             }
         </div>
     )

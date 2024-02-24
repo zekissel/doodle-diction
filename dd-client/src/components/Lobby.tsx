@@ -133,7 +133,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
         <main>
             <div className="lobbypanel">
                 { confirmExit && 
-                    <div>
+                    <div className="popupexit">
                         <span>Exit to menu? </span>
                         <button onClick={exitRoom}>Confirm</button>
                         <button onClick={() => setExit(false)}>Cancel</button>
@@ -146,7 +146,7 @@ function Lobby ({ setJoin, name, rKey, uKey, uID, setUID, user }: LobbyProps) {
                 <fieldset className="lobbyfield" id="roombox"><legend><h3>Lobby: { name }</h3></legend>
                     <button onClick={() => setExit(true)}>Exit</button>
                     { Number(uID) === 0 && 
-                        <button onClick={() => setShowSettings(true)}>Settings</button> 
+                        <button onClick={() => setShowSettings(!showSettings)}>Settings</button> 
                     }
                 </fieldset>
                 
