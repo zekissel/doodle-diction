@@ -13,6 +13,7 @@ env:
 
 jobs:
   on-success:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: containerize
 
     runs-on: ubuntu-latest
