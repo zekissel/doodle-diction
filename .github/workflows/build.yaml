@@ -8,6 +8,7 @@ on:
             - '*.yaml'
             - '*.md'
             - 'dd-server/tests/**'
+            - 'dd-server/requirements.txt'
         branches:
         - main
 
