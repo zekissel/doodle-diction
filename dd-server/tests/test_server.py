@@ -29,7 +29,7 @@ class TestAPIServer(unittest.TestCase):
     def tearDown(self):
         pass
     
-    def test_host_public_room(self):
+    def test_1_host_public_room(self):
         """
         *  GIVEN the server is running and no rooms exist
         *  WHEN a POST request is made to '/host' with a room name and host name
@@ -43,7 +43,7 @@ class TestAPIServer(unittest.TestCase):
         self.host_key = r['u_key']
         self.room_key = r['r_key']
 
-    def test_join_public_room(self):
+    def test_2_join_public_room(self):
         """
         *  GIVEN the server is running and one room exists
         *  WHEN a POST request is made to '/join' with a room name and user name
@@ -57,7 +57,7 @@ class TestAPIServer(unittest.TestCase):
         self.assertNotEqual(self.host_key, r['u_key'])
         self.user_key = r['u_key']
 
-    def test_close_room(self):
+    def test_3_close_room(self):
         """
         *  GIVEN the server is running and one room exists
         *  WHEN a POST request is made to '/exit' with the room and host keys
