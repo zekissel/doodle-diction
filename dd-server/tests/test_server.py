@@ -1,5 +1,6 @@
 import unittest
 import requests
+import time
 from ..schema import User, Room, index_models
 
 class TestAPIServer(unittest.TestCase):
@@ -28,6 +29,7 @@ class TestAPIServer(unittest.TestCase):
         """
         room = Room(name='test-room', cap=4, host=self.user, rID=0)
         room.save()
+        time.sleep(1)
 
         r = requests.get("http://localhost:8000/join").json()
         self.assertEqual(len(r['rooms']), 1)
