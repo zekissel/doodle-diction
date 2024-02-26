@@ -1,6 +1,5 @@
 import unittest
 import requests
-import time
 from ..schema import User, Room, index_models
 
 unittest.TestLoader.sortTestMethodsUsing = None
@@ -50,7 +49,7 @@ class TestAPIServer(unittest.TestCase):
         *  WHEN a POST request is made to '/join' with a room name and user name
         *  THEN the server should return a r_key, u_key, and u_id
         """
-        data = { 'name': 'Test Room', 'host': 'Test User', 'pw': '' }
+        data = { 'name': 'Test Room', 'user': 'Test User', 'pw': '' }
         r = requests.post("http://localhost:8000/join", json=data).json()
         self.assertEqual(r['u_id'], 1)
         self.assertIn('r_key', r.keys())
