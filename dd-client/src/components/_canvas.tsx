@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useOnDraw } from './_canvasUtils';
-import { SketchPicker } from 'react-color';
 
 interface Point { x: number; y: number; }
 type Color = `#${string}`;
@@ -18,7 +17,7 @@ const Canvas = ({ width, height, updateImage }: CanvasProps) => {
     const updateVisible = () => { setVisible(!visible); }
 
     const [color, setColor] = useState<Color>('#000000');
-    const updateColor = (e: any) => { setColor(e.hex); }
+    const updateColor = (e: any) => { setColor(e.target.value); }
 
     const [size, setSize] = useState(4);
     const updateSize = (e: any) => { setSize(e.target.value) }
@@ -60,7 +59,7 @@ const Canvas = ({ width, height, updateImage }: CanvasProps) => {
     }
 
     return(
-        <div>
+        <div id='canvasElement'>
             <button onClick={undo} style={buttonStyle}>Undo</button>
             <button onClick={clear} style={buttonStyle}>Clear</button>
             <button onClick={updateVisible} style={buttonStyle}>{ visible ? `Hide` : `Show` } Tools</button>
@@ -68,7 +67,7 @@ const Canvas = ({ width, height, updateImage }: CanvasProps) => {
             { visible &&
             <div className='tools'>
                 <label htmlFor='size'>Size: { size }<input id='size' type='range' onChange={updateSize} min={1} max={20} step={1} value={size}/></label>
-                <SketchPicker color={color} onChangeComplete={updateColor} />
+                <input type='color' value={color} onChange={updateColor} />
             </div>
             }
 
@@ -94,6 +93,7 @@ export default Canvas;
 const canvasStyle = {
     border: "1px solid black",
     background: `#FFF`,
+    touchAction: `none`
 }
 
 const buttonStyle = { width: `fit-content`, height: `fit-content`, margin: `1%` }
