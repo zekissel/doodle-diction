@@ -48,6 +48,7 @@ def host():
         room = Room(**request.json)
         room.users.append(host)
         room.save()
+        Room.db().expire(room.key(), 21600)
 
         server_chat(f'{host.name} is now hosting the lobby.', room)
         return { 'r_key': room.pk, 'u_key': host.pk, 'u_id': host.uID }, 200
